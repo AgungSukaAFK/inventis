@@ -4,6 +4,7 @@ import { UserProvider } from "@/lib/hooks/use-user";
 import { Sidebar } from "@/components/dashboard/sidebar";
 import { Topbar } from "@/components/dashboard/topbar";
 import { Toaster } from "@/components/ui/sonner";
+import { NavigationProgress } from "@/components/navigation-progress";
 import type { Profile } from "@/lib/supabase/types";
 
 export default async function DashboardLayout({
@@ -28,13 +29,13 @@ export default async function DashboardLayout({
     .single();
 
   if (!profile || !profile.is_active) {
-    await supabase.auth.signOut();
     redirect("/login?error=inactive");
   }
 
   return (
     <UserProvider initialProfile={profile as Profile}>
-      <div className="flex h-screen overflow-hidden bg-slate-50">
+      <NavigationProgress />
+      <div className="flex h-screen overflow-hidden bg-muted">
         <Sidebar />
         <div className="flex flex-1 flex-col overflow-hidden">
           <Topbar />

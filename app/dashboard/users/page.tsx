@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { CreateUserForm } from "./create-user-form";
 import { UsersTable } from "./users-table";
+import { AddUserDialog } from "./add-user-dialog";
 import type { Profile } from "@/lib/supabase/types";
 
 export default async function UsersPage() {
@@ -28,23 +28,19 @@ export default async function UsersPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold text-slate-900">
-          Manajemen Pengguna
-        </h1>
-        <p className="text-sm text-slate-500 mt-1">
-          Kelola akun pengguna yang terdaftar pada sistem.
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-foreground">
+            Manajemen Pengguna
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Kelola akun pengguna yang terdaftar pada sistem.
+          </p>
+        </div>
+        <AddUserDialog />
       </div>
 
-      <CreateUserForm />
-
-      <div>
-        <h2 className="text-base font-semibold text-slate-800 mb-3">
-          Pengguna Terdaftar ({users?.length ?? 0})
-        </h2>
-        <UsersTable users={(users ?? []) as Profile[]} />
-      </div>
+      <UsersTable users={(users ?? []) as Profile[]} />
     </div>
   );
 }

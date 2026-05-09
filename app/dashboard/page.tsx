@@ -21,17 +21,17 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-slate-900">
+        <h1 className="text-2xl font-semibold text-foreground">
           Selamat datang, {profile?.full_name ?? "Pengguna"} 👋
         </h1>
-        <p className="text-sm text-slate-500 mt-1">
+        <p className="text-sm text-muted-foreground mt-1">
           {roleLabel[profile?.role ?? ""] ?? profile?.role} · Banten Jaya Sport
           Fashion
         </p>
       </div>
 
-      <div className="rounded-lg border border-slate-200 bg-white p-6">
-        <p className="text-sm text-slate-600">
+      <div className="rounded-lg border border-border bg-card p-6">
+        <p className="text-sm text-muted-foreground">
           Gunakan menu di sebelah kiri untuk navigasi sistem inventaris.
         </p>
       </div>

@@ -1,12 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import { useActionState } from "react";
 import { login } from "../actions";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -23,21 +23,35 @@ export default function LoginPage() {
   );
 
   return (
-    <Card className="w-full max-w-sm">
-      <CardHeader className="space-y-1">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-2xl font-bold text-sky-700">Inventis</span>
+    <Card className="w-full">
+      <CardHeader className="items-center text-center pb-4">
+        {/* Logo */}
+        <Image
+          src="/logo-bj.png"
+          alt="Banten Jaya Sport Fashion"
+          width={52}
+          height={52}
+          className="rounded-full mx-auto"
+        />
+        <div className="leading-tight mb-1">
+          <p className="text-lg font-bold text-primary leading-none">
+            Inventis
+          </p>
+          <p className="text-[11px] text-muted-foreground mt-1">
+            Banten Jaya Sport Fashion
+          </p>
         </div>
+
         <CardTitle className="text-xl">Masuk ke sistem</CardTitle>
         <CardDescription>
-          Masukkan email dan password Anda untuk melanjutkan
+          Masukkan email dan password untuk melanjutkan
         </CardDescription>
       </CardHeader>
 
       <form action={action}>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-5">
           {state?.error && (
-            <div className="rounded-md bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
+            <div className="rounded-md bg-destructive/10 border border-destructive/20 px-3 py-2.5 text-sm text-destructive">
               {state.error}
             </div>
           )}
@@ -64,16 +78,15 @@ export default function LoginPage() {
               autoComplete="current-password"
             />
           </div>
-        </CardContent>
 
-        <CardFooter className="flex flex-col gap-3">
           <Button type="submit" className="w-full" disabled={pending}>
             {pending ? "Memproses..." : "Masuk"}
           </Button>
-          <p className="text-xs text-slate-500 text-center">
-            Belum punya akun? Hubungi administrator toko.
+
+          <p className="text-xs text-muted-foreground text-center pb-1">
+            Belum punya akun? Hubungi pemilik toko.
           </p>
-        </CardFooter>
+        </CardContent>
       </form>
     </Card>
   );

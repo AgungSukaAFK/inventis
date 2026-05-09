@@ -38,7 +38,11 @@ export async function proxy(request: NextRequest) {
   }
 
   // Redirect authenticated users away from login page
-  if (user && pathname === "/login") {
+  if (
+    user &&
+    pathname === "/login" &&
+    request.nextUrl.searchParams.get("error") !== "inactive"
+  ) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 

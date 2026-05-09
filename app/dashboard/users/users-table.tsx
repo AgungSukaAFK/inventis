@@ -52,40 +52,40 @@ export function UsersTable({ users }: { users: Profile[] }) {
   }
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white overflow-hidden">
+    <div className="rounded-lg border border-border bg-card overflow-hidden">
       <table className="w-full text-sm">
-        <thead className="bg-slate-50 border-b border-slate-200">
+        <thead className="bg-muted/50 border-b border-border">
           <tr>
-            <th className="text-left font-medium text-slate-600 px-4 py-3">
+            <th className="text-left font-medium text-muted-foreground px-4 py-3">
               Nama
             </th>
-            <th className="text-left font-medium text-slate-600 px-4 py-3">
+            <th className="text-left font-medium text-muted-foreground px-4 py-3">
               Email
             </th>
-            <th className="text-left font-medium text-slate-600 px-4 py-3">
+            <th className="text-left font-medium text-muted-foreground px-4 py-3">
               Role
             </th>
-            <th className="text-left font-medium text-slate-600 px-4 py-3">
+            <th className="text-left font-medium text-muted-foreground px-4 py-3">
               Status
             </th>
-            <th className="text-left font-medium text-slate-600 px-4 py-3">
+            <th className="text-left font-medium text-muted-foreground px-4 py-3">
               Bergabung
             </th>
             <th className="px-4 py-3" />
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100">
+        <tbody className="divide-y divide-border/50">
           {users.map((user) => {
             const isSelf = user.id === currentUser?.id;
             return (
-              <tr key={user.id} className="hover:bg-slate-50">
-                <td className="px-4 py-3 font-medium text-slate-900">
+              <tr key={user.id} className="hover:bg-accent/40 transition-colors">
+                <td className="px-4 py-3 font-medium text-foreground">
                   {user.full_name}
                   {isSelf && (
-                    <span className="ml-2 text-xs text-slate-400">(Anda)</span>
+                    <span className="ml-2 text-xs text-muted-foreground">(Anda)</span>
                   )}
                 </td>
-                <td className="px-4 py-3 text-slate-600">{user.email}</td>
+                <td className="px-4 py-3 text-muted-foreground">{user.email}</td>
                 <td className="px-4 py-3">
                   <Badge variant="secondary">
                     {roleLabel[user.role] ?? user.role}
@@ -96,14 +96,14 @@ export function UsersTable({ users }: { users: Profile[] }) {
                     variant={user.is_active ? "default" : "outline"}
                     className={
                       user.is_active
-                        ? "bg-green-100 text-green-700 hover:bg-green-100"
-                        : "text-slate-500"
+                        ? "bg-green-100 text-green-700 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400"
+                        : "text-muted-foreground"
                     }
                   >
                     {user.is_active ? "Aktif" : "Nonaktif"}
                   </Badge>
                 </td>
-                <td className="px-4 py-3 text-slate-500">
+                <td className="px-4 py-3 text-muted-foreground">
                   {new Date(user.created_at).toLocaleDateString("id-ID", {
                     day: "numeric",
                     month: "short",
@@ -114,7 +114,7 @@ export function UsersTable({ users }: { users: Profile[] }) {
                   {!isSelf && (
                     <DropdownMenu>
                       <DropdownMenuTrigger
-                        className="inline-flex size-8 items-center justify-center rounded-md text-slate-500 hover:bg-slate-100 hover:text-slate-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                        className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                         disabled={isPending}
                       >
                         <MoreHorizontal className="h-4 w-4" />
@@ -136,7 +136,7 @@ export function UsersTable({ users }: { users: Profile[] }) {
                         <DropdownMenuItem
                           className={
                             user.is_active
-                              ? "text-red-600 focus:text-red-600"
+                              ? "text-destructive focus:text-destructive"
                               : "text-green-600 focus:text-green-600"
                           }
                           onSelect={() => handleToggleActive(user)}
@@ -153,7 +153,7 @@ export function UsersTable({ users }: { users: Profile[] }) {
         </tbody>
       </table>
       {users.length === 0 && (
-        <div className="py-12 text-center text-sm text-slate-500">
+        <div className="py-12 text-center text-sm text-muted-foreground">
           Belum ada pengguna terdaftar.
         </div>
       )}

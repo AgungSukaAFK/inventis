@@ -1,11 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
+    <div className="min-h-screen bg-background text-foreground font-sans">
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-sm">
+      <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-sm">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
             <Image
@@ -16,37 +17,36 @@ export default function Home() {
               className="rounded-full w-auto h-auto"
             />
             <div className="leading-tight">
-              <p className="text-sm font-bold text-red-600">
+              <p className="text-sm font-bold text-primary">
                 Banten Jaya Sport Fashion
               </p>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-muted-foreground">
                 Sistem Inventaris &amp; Pendukung Keputusan
               </p>
             </div>
           </div>
-          <nav className="hidden items-center gap-8 text-sm text-slate-700 md:flex">
-            <a
-              href="#tentang"
-              className="hover:text-slate-900 transition-colors"
-            >
+
+          <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
+            <a href="#tentang" className="hover:text-foreground transition-colors">
               Tentang
             </a>
-            <a href="#fitur" className="hover:text-slate-900 transition-colors">
+            <a href="#fitur" className="hover:text-foreground transition-colors">
               Fitur
             </a>
-            <a
-              href="#manfaat"
-              className="hover:text-slate-900 transition-colors"
-            >
+            <a href="#manfaat" className="hover:text-foreground transition-colors">
               Manfaat
             </a>
           </nav>
-          <Link
-            href="/login"
-            className="inline-flex rounded-full bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-700"
-          >
-            Masuk
-          </Link>
+
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Link
+              href="/login"
+              className="inline-flex rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90"
+            >
+              Masuk
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -54,15 +54,15 @@ export default function Home() {
         {/* Hero */}
         <section className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
           <div>
-            <p className="inline-flex items-center gap-2 rounded-full bg-red-50 px-3 py-1 text-sm font-semibold text-red-600">
-              <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
+            <p className="inline-flex items-center gap-2 rounded-full bg-primary/8 px-3 py-1 text-sm font-semibold text-primary">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
               Khusus untuk Banten Jaya Sport Fashion
             </p>
-            <h1 className="mt-6 max-w-3xl text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
+            <h1 className="mt-6 max-w-3xl text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
               Sistem Pendukung Keputusan Inventaris dengan Metode{" "}
-              <span className="text-red-600">TOPSIS</span>
+              <span className="text-primary">TOPSIS</span>
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
               Bantu pemilik toko mengambil keputusan restocking yang optimal —
               berdasarkan data penjualan, harga, margin, dan pergerakan barang
               secara real-time.
@@ -70,13 +70,13 @@ export default function Home() {
             <div className="mt-10 flex flex-col gap-4 sm:flex-row">
               <Link
                 href="/login"
-                className="inline-flex items-center justify-center rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-red-600/20 transition hover:bg-red-700"
+                className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition hover:bg-primary/90"
               >
                 Masuk ke Sistem
               </Link>
               <a
                 href="#fitur"
-                className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-900 transition hover:border-slate-400 hover:bg-slate-50"
+                className="inline-flex items-center justify-center rounded-full border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-accent"
               >
                 Lihat Fitur
               </a>
@@ -84,10 +84,10 @@ export default function Home() {
           </div>
 
           {/* Mock dashboard card */}
-          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-xl shadow-slate-200/50">
-            <div className="mb-6 flex items-center justify-between rounded-2xl bg-red-600 p-4 text-white">
+          <div className="rounded-3xl border border-border bg-card p-8 shadow-xl shadow-border/30">
+            <div className="mb-6 flex items-center justify-between rounded-2xl bg-primary p-4 text-primary-foreground">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-red-100">
+                <p className="text-xs font-semibold uppercase tracking-widest text-primary-foreground/70">
                   Rekomendasi Restock
                 </p>
                 <p className="mt-1.5 text-2xl font-bold">Hasil TOPSIS</p>
@@ -108,29 +108,29 @@ export default function Home() {
               ].map((item) => (
                 <div
                   key={item.rank}
-                  className="flex items-center gap-3 rounded-2xl bg-slate-50 p-3"
+                  className="flex items-center gap-3 rounded-2xl bg-muted p-3"
                 >
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-600">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
                     #{item.rank}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-slate-900">
+                    <p className="truncate text-sm font-medium text-foreground">
                       {item.nama}
                     </p>
-                    <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
+                    <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-border">
                       <div
-                        className="h-full rounded-full bg-red-500"
+                        className="h-full rounded-full bg-primary"
                         style={{ width: item.skor }}
                       />
                     </div>
                   </div>
-                  <span className="shrink-0 text-sm font-semibold text-red-600">
+                  <span className="shrink-0 text-sm font-semibold text-primary">
                     {item.skor}
                   </span>
                 </div>
               ))}
             </div>
-            <p className="mt-4 text-center text-xs text-slate-400">
+            <p className="mt-4 text-center text-xs text-muted-foreground">
               Berdasarkan kriteria: Penjualan · Harga · Margin · Pergerakan
               Barang
             </p>
@@ -146,41 +146,39 @@ export default function Home() {
                 alt="Banten Jaya Sport Fashion"
                 width={140}
                 height={140}
-                className="rounded-full shadow-lg shadow-slate-200"
+                className="rounded-full shadow-lg shadow-border"
               />
             </div>
             <div>
-              <p className="text-sm font-semibold uppercase tracking-widest text-red-600">
+              <p className="text-sm font-semibold uppercase tracking-widest text-primary">
                 Tentang Toko
               </p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900">
+              <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground">
                 Banten Jaya Sport Fashion
               </h2>
-              <p className="mt-1 text-slate-500">
+              <p className="mt-1 text-muted-foreground">
                 Jl. Maulana Hasanudin No. 6, RT 06/01, Kotabaru, Kota Serang,
                 Banten 42112
               </p>
-              <p className="mt-5 max-w-2xl leading-8 text-slate-600">
-                Berdiri sejak <strong>1990</strong>, Banten Jaya Sport Fashion
-                adalah toko ritel perlengkapan olahraga yang melayani masyarakat
-                Kota Serang dan sekitarnya. Dimulai dari penjualan pakaian dan
-                sepatu olahraga, kini toko menyediakan jersey, perlengkapan bulu
-                tangkis, tas olahraga, dan berbagai aksesoris sport sesuai
-                kebutuhan pelanggan.
+              <p className="mt-5 max-w-2xl leading-8 text-muted-foreground">
+                Berdiri sejak <strong className="text-foreground">1990</strong>,
+                Banten Jaya Sport Fashion adalah toko ritel perlengkapan olahraga
+                yang melayani masyarakat Kota Serang dan sekitarnya. Dimulai dari
+                penjualan pakaian dan sepatu olahraga, kini toko menyediakan
+                jersey, perlengkapan bulu tangkis, tas olahraga, dan berbagai
+                aksesoris sport sesuai kebutuhan pelanggan.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
-                {[
-                  "Sejak 1990",
-                  "Kota Serang, Banten",
-                  "Perlengkapan Olahraga Lengkap",
-                ].map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-full border border-slate-200 bg-white px-4 py-1.5 text-sm font-medium text-slate-700"
-                  >
-                    {tag}
-                  </span>
-                ))}
+                {["Sejak 1990", "Kota Serang, Banten", "Perlengkapan Olahraga Lengkap"].map(
+                  (tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-full border border-border bg-card px-4 py-1.5 text-sm font-medium text-muted-foreground"
+                    >
+                      {tag}
+                    </span>
+                  ),
+                )}
               </div>
             </div>
           </div>
@@ -189,10 +187,10 @@ export default function Home() {
         {/* Fitur */}
         <section id="fitur" className="mt-24">
           <div className="text-center">
-            <p className="text-sm font-semibold uppercase tracking-widest text-red-600">
+            <p className="text-sm font-semibold uppercase tracking-widest text-primary">
               Fitur Sistem
             </p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-slate-900">
+            <h2 className="mt-3 text-3xl font-semibold tracking-tight text-foreground">
               Semua yang dibutuhkan untuk keputusan restock yang tepat
             </h2>
           </div>
@@ -225,15 +223,15 @@ export default function Home() {
             ].map((f) => (
               <div
                 key={f.label}
-                className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition hover:shadow-md hover:shadow-slate-200/50"
+                className="rounded-3xl border border-border bg-card p-8 shadow-sm transition hover:shadow-md"
               >
-                <div className="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-full bg-red-100">
-                  <span className="h-2 w-2 rounded-full bg-red-500" />
+                <div className="mb-4 inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary/10">
+                  <span className="h-2 w-2 rounded-full bg-primary" />
                 </div>
-                <h3 className="text-lg font-semibold text-slate-900">
+                <h3 className="text-lg font-semibold text-foreground">
                   {f.label}
                 </h3>
-                <p className="mt-2 text-sm leading-7 text-slate-600">
+                <p className="mt-2 text-sm leading-7 text-muted-foreground">
                   {f.desc}
                 </p>
               </div>
@@ -241,20 +239,30 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Manfaat */}
+        {/* Manfaat — selalu gelap, pakai surface-inverse */}
         <section
           id="manfaat"
-          className="mt-24 rounded-[2rem] bg-slate-950 px-8 py-14 text-white shadow-xl shadow-slate-900/30"
+          className="mt-24 rounded-[2rem] px-8 py-14 shadow-xl"
+          style={{
+            backgroundColor: "var(--surface-inverse)",
+            color: "var(--surface-inverse-foreground)",
+          }}
         >
           <div className="grid gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-center">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-widest text-red-400">
+              <p className="text-sm font-semibold uppercase tracking-widest text-primary">
                 Manfaat Utama
               </p>
-              <h2 className="mt-4 text-3xl font-semibold tracking-tight">
+              <h2
+                className="mt-4 text-3xl font-semibold tracking-tight"
+                style={{ color: "var(--surface-inverse-foreground)" }}
+              >
                 Optimalkan pengeluaran restock dengan data, bukan perkiraan.
               </h2>
-              <p className="mt-5 max-w-xl leading-8 text-slate-300">
+              <p
+                className="mt-5 max-w-xl leading-8"
+                style={{ color: "var(--surface-inverse-foreground)", opacity: 0.7 }}
+              >
                 Sistem ini dirancang khusus untuk kondisi toko Banten Jaya —
                 memastikan anggaran tidak terbuang untuk barang yang
                 pergerakannya lambat, dan stok tidak kosong untuk barang yang
@@ -280,11 +288,19 @@ export default function Home() {
                   desc: "Notifikasi browser langsung saat data berubah.",
                 },
               ].map((b) => (
-                <div key={b.title} className="rounded-2xl bg-slate-900/80 p-5">
-                  <p className="text-sm font-semibold text-red-400">
-                    {b.title}
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-slate-400">
+                <div
+                  key={b.title}
+                  className="rounded-2xl p-5"
+                  style={{ backgroundColor: "rgba(255,255,255,0.05)" }}
+                >
+                  <p className="text-sm font-semibold text-primary">{b.title}</p>
+                  <p
+                    className="mt-2 text-sm leading-6"
+                    style={{
+                      color: "var(--surface-inverse-foreground)",
+                      opacity: 0.6,
+                    }}
+                  >
                     {b.desc}
                   </p>
                 </div>
@@ -294,7 +310,7 @@ export default function Home() {
         </section>
 
         {/* CTA */}
-        <section className="mt-16 rounded-3xl border border-red-100 bg-white p-10 shadow-lg shadow-red-100/30">
+        <section className="mt-16 rounded-3xl border border-primary/15 bg-card p-10 shadow-lg shadow-primary/8">
           <div className="flex flex-col items-center gap-6 text-center lg:flex-row lg:justify-between lg:text-left">
             <div className="flex items-center gap-4">
               <Image
@@ -305,17 +321,17 @@ export default function Home() {
                 className="shrink-0 rounded-full"
               />
               <div>
-                <h2 className="text-2xl font-semibold text-slate-900">
+                <h2 className="text-2xl font-semibold text-foreground">
                   Siap menggunakan sistem?
                 </h2>
-                <p className="mt-1 text-sm text-slate-500">
+                <p className="mt-1 text-sm text-muted-foreground">
                   Masuk dengan akun yang telah disiapkan administrator toko.
                 </p>
               </div>
             </div>
             <Link
               href="/login"
-              className="inline-flex shrink-0 items-center justify-center rounded-full bg-red-600 px-8 py-3 text-sm font-semibold text-white shadow-md shadow-red-600/20 transition hover:bg-red-700"
+              className="inline-flex shrink-0 items-center justify-center rounded-full bg-primary px-8 py-3 text-sm font-semibold text-primary-foreground shadow-md shadow-primary/20 transition hover:bg-primary/90"
             >
               Masuk ke Sistem →
             </Link>
@@ -324,7 +340,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="mt-16 border-t border-slate-200 bg-white">
+      <footer className="mt-16 border-t border-border bg-card">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-8 sm:flex-row">
           <div className="flex items-center gap-3">
             <Image
@@ -334,11 +350,11 @@ export default function Home() {
               height={32}
               className="rounded-full"
             />
-            <span className="text-sm font-semibold text-slate-700">
+            <span className="text-sm font-semibold text-foreground">
               Banten Jaya Sport Fashion
             </span>
           </div>
-          <p className="text-xs text-slate-400 text-center">
+          <p className="text-xs text-muted-foreground text-center">
             Jl. Maulana Hasanudin No. 6, Kotabaru, Kota Serang, Banten 42112 ·
             Beroperasi sejak 1990
           </p>
