@@ -95,8 +95,8 @@ export default function Home() {
               <Image
                 src="/logo-bj.png"
                 alt="BJ Logo"
-                width={40}
-                height={40}
+                width={20}
+                height={20}
                 className="rounded-full opacity-90"
               />
             </div>
