@@ -76,17 +76,18 @@ export async function upsertMonthlySales(
   const priceMap: Record<string, number> = {};
   for (const p of products ?? []) priceMap[p.id] = p.selling_price;
 
-  // Delete existing records for this month (on saleDate only)
-  const { error: delErr } = await supabase
-    .from("sales_history")
-    .delete()
-    .eq("sale_date", saleDate)
-    .in("product_id", productIds);
+  // Delete rows for products with qty = 0 (clear them out)
+  const zeroIds = entries.filter((e) => e.qty === 0).map((e) => e.product_id);
+  if (zeroIds.length > 0) {
+    await supabase
+      .from("sales_history")
+      .delete()
+      .eq("sale_date", saleDate)
+      .in("product_id", zeroIds);
+  }
 
-  if (delErr) return { error: "Gagal menghapus data lama." };
-
-  // Insert new records (skip qty = 0)
-  const toInsert = entries
+  // Upsert rows with qty > 0 (insert or overwrite via unique constraint)
+  const toUpsert = entries
     .filter((e) => e.qty > 0)
     .map((e) => ({
       product_id: e.product_id,
@@ -95,14 +96,14 @@ export async function upsertMonthlySales(
       revenue: e.qty * (priceMap[e.product_id] ?? 0),
     }));
 
-  if (toInsert.length > 0) {
-    const { error: insErr } = await supabase
+  if (toUpsert.length > 0) {
+    const { error: upsErr } = await supabase
       .from("sales_history")
-      .insert(toInsert);
+      .upsert(toUpsert, { onConflict: "product_id,sale_date" });
 
-    if (insErr) return { error: "Gagal menyimpan data penjualan." };
+    if (upsErr) return { error: "Gagal menyimpan data penjualan." };
   }
 
   revalidatePath("/dashboard/sales");
-  return { success: true, saved: toInsert.length };
+  return { success: true, saved: toUpsert.length };
 }

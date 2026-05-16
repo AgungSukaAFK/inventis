@@ -67,9 +67,7 @@ const navItems: NavItem[] = [
     roles: ["kepala_gudang", "kepala_toko", "owner"],
     basePath: "/dashboard/calculations",
     children: [
-      { label: "Safety Stock", href: "/dashboard/calculations/safety-stock" },
       { label: "Priority Ranking", href: "/dashboard/calculations/priority-ranking" },
-      { label: "Restock Quantity", href: "/dashboard/calculations/restock-quantity" },
     ],
   },
   {
@@ -94,9 +92,7 @@ const navItems: NavItem[] = [
     basePath: "/dashboard/settings",
     children: [
       { label: "Kategori Barang", href: "/dashboard/settings/categories" },
-      { label: "Safety Stock", href: "/dashboard/settings/safety-stock" },
       { label: "Priority Ranking", href: "/dashboard/settings/priority-ranking" },
-      { label: "Restock Quantity", href: "/dashboard/settings/restock-quantity" },
     ],
   },
   {
@@ -189,9 +185,9 @@ export function Sidebar() {
   const { profile } = useUser();
 
   return (
-    <aside className="w-64 shrink-0 border-r border-border bg-card flex flex-col">
+    <aside className="w-64 shrink-0 border-r border-border bg-card flex flex-col print:hidden">
       {/* Logo */}
-      <div className="px-4 py-4 border-b border-border">
+      <div className="h-14 px-4 border-b border-border flex items-center">
         <div className="flex items-center gap-3">
           <Image
             src="/logo-bj.png"

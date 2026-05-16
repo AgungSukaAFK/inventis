@@ -67,23 +67,29 @@ export async function updateStock(_prevState: unknown, formData: FormData) {
   const product_id = formData.get("product_id") as string;
   const new_stock = Number(formData.get("new_stock"));
   const note = (formData.get("note") as string | null)?.trim() || null;
+  const safety_stock_raw = formData.get("safety_stock");
+  const safety_stock = safety_stock_raw !== null && safety_stock_raw !== "" ? Number(safety_stock_raw) : null;
 
   if (!product_id) return { error: "ID barang tidak valid." };
   if (new_stock < 0) return { error: "Stok tidak boleh negatif." };
+  if (safety_stock !== null && safety_stock < 0) return { error: "Safety stock tidak boleh negatif." };
 
   const { data: current, error: fetchErr } = await supabase
     .from("products")
-    .select("current_stock")
+    .select("current_stock, safety_stock")
     .eq("id", product_id)
     .single();
 
   if (fetchErr || !current) return { error: "Barang tidak ditemukan." };
 
-  const old_stock = (current as { current_stock: number }).current_stock;
+  const old_stock = (current as { current_stock: number; safety_stock: number }).current_stock;
+
+  const updatePayload: Record<string, number> = { current_stock: new_stock };
+  if (safety_stock !== null) updatePayload.safety_stock = safety_stock;
 
   const { error } = await supabase
     .from("products")
-    .update({ current_stock: new_stock })
+    .update(updatePayload)
     .eq("id", product_id);
 
   if (error) return { error: "Gagal memperbarui stok. Coba lagi." };
@@ -94,7 +100,7 @@ export async function updateStock(_prevState: unknown, formData: FormData) {
     table_name: "products",
     record_id: product_id,
     old_data: { current_stock: old_stock },
-    new_data: { current_stock: new_stock, note },
+    new_data: { current_stock: new_stock, safety_stock, note },
   });
 
   revalidatePath("/dashboard/products");

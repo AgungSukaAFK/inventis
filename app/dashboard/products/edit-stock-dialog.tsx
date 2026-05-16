@@ -17,11 +17,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { updateStock } from "./actions";
-import type { Product } from "@/lib/supabase/types";
+import type { Product, UserRole } from "@/lib/supabase/types";
 
 type ActionState = { error?: string; success?: boolean } | undefined;
 
-export function EditStockDialog({ product }: { product: Product }) {
+export function EditStockDialog({ product, role }: { product: Product; role: UserRole }) {
   const [open, setOpen] = useState(false);
 
   const [state, action, pending] = useActionState<ActionState, FormData>(
@@ -32,6 +32,8 @@ export function EditStockDialog({ product }: { product: Product }) {
     },
     undefined,
   );
+
+  const isKepalaToko = role === "kepala_toko";
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -71,6 +73,22 @@ export function EditStockDialog({ product }: { product: Product }) {
                 required
               />
             </div>
+
+            {isKepalaToko && (
+              <div className="space-y-2">
+                <Label htmlFor="safety_stock">Safety Stock</Label>
+                <Input
+                  id="safety_stock"
+                  name="safety_stock"
+                  type="number"
+                  min={0}
+                  defaultValue={product.safety_stock}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Batas minimum stok sebelum perlu restock.
+                </p>
+              </div>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="note">Catatan</Label>

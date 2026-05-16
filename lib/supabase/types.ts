@@ -10,6 +10,14 @@ export type SafetyStockMetricKey =
   | "movement_category"
   | "stockout_days";
 
+export type PriorityRankingMetricKey =
+  | "avg_daily_sales"
+  | "current_stock"
+  | "purchase_price"
+  | "margin_percentage";
+
+export type MetricKey = SafetyStockMetricKey | PriorityRankingMetricKey;
+
 export type Criteria = {
   id: string;
   code: string;
@@ -18,7 +26,7 @@ export type Criteria = {
   type: CriteriaType;
   weight: number;
   purpose: CalculationPurpose;
-  metric_key: SafetyStockMetricKey | null;
+  metric_key: MetricKey | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -67,11 +75,16 @@ export type TopsisResult = {
   recommended_qty: number;
   estimated_cost: number;
   decision_summary: string | null;
+  // Safety Stock metrics
   avg_daily_sales: number | null;
   coefficient_of_variation: number | null;
   stockout_days: number | null;
   current_safety_stock: number | null;
   recommended_safety_stock: number | null;
+  // Priority Ranking metrics (snapshot at time of calculation)
+  current_stock_snapshot: number | null;
+  purchase_price_snapshot: number | null;
+  margin_percentage: number | null;
   created_at: string;
 };
 

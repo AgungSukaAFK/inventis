@@ -35,11 +35,11 @@ export default async function DashboardLayout({
   return (
     <UserProvider initialProfile={profile as Profile}>
       <NavigationProgress />
-      <div className="flex h-screen overflow-hidden bg-muted">
+      <div className="flex h-screen overflow-hidden bg-muted print:block print:h-auto print:overflow-visible print:bg-white">
         <Sidebar />
-        <div className="flex flex-1 flex-col overflow-hidden">
+        <div className="flex flex-1 flex-col overflow-hidden print:block print:overflow-visible">
           <Topbar />
-          <main className="flex-1 overflow-y-auto p-6">{children}</main>
+          <main className="flex-1 overflow-y-auto p-6 print:p-0 print:overflow-visible">{children}</main>
         </div>
       </div>
       <Toaster richColors />

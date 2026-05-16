@@ -164,29 +164,77 @@
 }
 
 @media print {
-  /* Hide navigation, topbar, sidebar, and action buttons */
+  /* Ensure colors and backgrounds render */
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide chrome */
   nav,
   aside,
   header,
-  [data-sidebar] {
+  [data-sidebar],
+  .print\:hidden {
     display: none !important;
   }
 
+  /* Break the dashboard layout's height/overflow cage so content flows across pages */
+  html,
   body {
-    background: white;
-    color: black;
-    font-size: 12px;
+    height: auto !important;
+    overflow: visible !important;
+    background: white !important;
+    color: black !important;
+    font-size: 11pt !important;
   }
 
+  /* Every flex/grid wrapper that could clip content */
+  body > *,
+  body > * > *,
+  body > * > * > *,
+  main {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  /* Page setup */
+  @page {
+    size: A4 portrait;
+    margin: 18mm 15mm;
+  }
+
+  /* Tables */
   table {
     width: 100%;
     border-collapse: collapse;
+    page-break-inside: auto;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
   }
 
   th,
   td {
-    border: 1px solid #ccc;
-    padding: 6px 10px;
+    border: 1px solid #d1d5db;
+    padding: 5px 8px;
+    font-size: 10pt;
+  }
+
+  /* Rounded corners → straight for print */
+  .rounded-xl,
+  .rounded-lg,
+  .rounded-full {
+    border-radius: 0 !important;
   }
 
   a {

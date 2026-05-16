@@ -57,7 +57,7 @@ export function Topbar() {
       .slice(0, 2) ?? "?";
 
   return (
-    <header className="h-14 border-b border-border bg-card flex items-center justify-between px-6">
+    <header className="h-14 border-b border-border bg-card flex items-center justify-between px-6 print:hidden">
       <div />
 
       <div className="flex items-center gap-2">

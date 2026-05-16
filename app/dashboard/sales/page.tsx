@@ -33,7 +33,7 @@ export default async function SalesPage({
 
   return (
     <div className="w-full">
-      <SalesForm month={month} products={products} salesMap={salesMap} />
+      <SalesForm key={month} month={month} products={products} salesMap={salesMap} />
     </div>
   );
 }

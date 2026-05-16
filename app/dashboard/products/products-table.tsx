@@ -53,6 +53,9 @@ export function ProductsTable({ products, role }: Props) {
             )}
             <th className="px-4 py-3 text-right font-medium text-muted-foreground">Harga Jual</th>
             <th className="px-4 py-3 text-right font-medium text-muted-foreground">Stok</th>
+            {isKepalaToko && (
+              <th className="px-4 py-3 text-right font-medium text-muted-foreground">Safety Stock</th>
+            )}
             <th className="px-4 py-3 text-left font-medium text-muted-foreground">Status</th>
             {canEditStock && (
               <th className="px-4 py-3 text-right font-medium text-muted-foreground">Aksi</th>
@@ -112,6 +115,11 @@ export function ProductsTable({ products, role }: Props) {
                     <span className="ml-1 text-xs text-destructive">(habis)</span>
                   )}
                 </td>
+                {isKepalaToko && (
+                  <td className="px-4 py-3 text-right tabular-nums text-muted-foreground">
+                    {p.safety_stock}
+                  </td>
+                )}
                 <td className="px-4 py-3">
                   <span
                     className={cn(
@@ -128,7 +136,7 @@ export function ProductsTable({ products, role }: Props) {
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-2">
                       <StockHistoryDialog productId={p.id} productName={p.name} />
-                      <EditStockDialog product={p} />
+                      <EditStockDialog product={p} role={role} />
                       {isKepalaToko && (
                         <form
                           action={async () => {

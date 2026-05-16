@@ -1,10 +1,21 @@
 "use client";
 
-import { useActionState, useTransition, useEffect, useRef } from "react";
+import { useActionState, useTransition, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { upsertMonthlySales } from "./actions";
+import { cn } from "@/lib/utils";
+
+const MONTHS = [
+  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+  "Juli", "Agustus", "September", "Oktober", "November", "Desember",
+];
+
+function buildYears() {
+  const current = new Date().getFullYear();
+  return Array.from({ length: 11 }, (_, i) => current - i).reverse();
+}
 
 type Product = {
   id: string;
@@ -45,13 +56,24 @@ export function SalesForm({ month, products, salesMap }: Props) {
     }
   }, [state]);
 
-  function handleMonthChange(e: React.ChangeEvent<HTMLInputElement>) {
+  const [selectedYear, selectedMonthIdx] = month.split("-").map(Number);
+
+  function handleMonthSelect(e: React.ChangeEvent<HTMLSelectElement>) {
+    const mm = String(e.target.value).padStart(2, "0");
     startNavigating(() => {
-      router.push(`/dashboard/sales?month=${e.target.value}`);
+      router.push(`/dashboard/sales?month=${selectedYear}-${mm}`);
+    });
+  }
+
+  function handleYearSelect(e: React.ChangeEvent<HTMLSelectElement>) {
+    const mm = String(selectedMonthIdx).padStart(2, "0");
+    startNavigating(() => {
+      router.push(`/dashboard/sales?month=${e.target.value}-${mm}`);
     });
   }
 
   const loading = isPending || isNavigating;
+  const [focusedId, setFocusedId] = useState<string | null>(null);
 
   return (
     <div className="space-y-6">
@@ -66,20 +88,27 @@ export function SalesForm({ month, products, salesMap }: Props) {
         </div>
 
         <div className="flex items-center gap-2">
-          <label
-            htmlFor="month-picker"
-            className="text-sm font-medium text-foreground whitespace-nowrap"
-          >
-            Bulan:
-          </label>
-          <input
-            id="month-picker"
-            type="month"
-            defaultValue={month}
-            onChange={handleMonthChange}
+          <span className="text-sm font-medium text-foreground whitespace-nowrap">Bulan:</span>
+          <select
+            value={selectedMonthIdx}
+            onChange={handleMonthSelect}
             disabled={loading}
             className="h-8 rounded-lg border border-input bg-background px-2.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:opacity-50"
-          />
+          >
+            {MONTHS.map((label, i) => (
+              <option key={i} value={i + 1}>{label}</option>
+            ))}
+          </select>
+          <select
+            value={selectedYear}
+            onChange={handleYearSelect}
+            disabled={loading}
+            className="h-8 rounded-lg border border-input bg-background px-2.5 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:opacity-50"
+          >
+            {buildYears().map((y) => (
+              <option key={y} value={y}>{y}</option>
+            ))}
+          </select>
         </div>
       </div>
 
@@ -108,54 +137,67 @@ export function SalesForm({ month, products, salesMap }: Props) {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/30">
-                <th className="w-14 px-4 py-3 text-left font-medium text-muted-foreground">
-                  No
-                </th>
-                <th className="w-28 px-4 py-3 text-left font-medium text-muted-foreground">
-                  SKU
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                  Nama Produk
-                </th>
-                <th className="w-28 px-4 py-3 text-center font-medium text-muted-foreground">
-                  Kategori
-                </th>
-                <th className="w-36 px-4 py-3 text-center font-medium text-muted-foreground">
-                  Qty Terjual
-                </th>
+                <th className="w-12 px-4 py-3 text-left font-medium text-muted-foreground">No</th>
+                <th className="w-28 px-4 py-3 text-left font-medium text-muted-foreground">SKU</th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Nama Produk</th>
+                <th className="w-28 px-4 py-3 text-center font-medium text-muted-foreground">Kategori</th>
+                <th className="w-40 px-4 py-3 text-center font-medium text-muted-foreground">Qty Terjual</th>
               </tr>
             </thead>
             <tbody>
-              {products.map((p, idx) => (
-                <tr key={p.id} className="border-b border-border last:border-0">
-                  <td className="px-4 py-3 tabular-nums text-muted-foreground">
-                    {idx + 1}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="font-mono text-xs text-muted-foreground bg-muted rounded px-1.5 py-0.5">
-                      {p.sku}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 font-medium text-foreground">
-                    {p.name}
-                  </td>
-                  <td className="px-4 py-3 text-center">
-                    <span className="text-xs text-muted-foreground">
-                      {MOVEMENT_LABEL[p.movement_category] ?? p.movement_category}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-center">
-                    <input
-                      type="number"
-                      name={`qty_${p.id}`}
-                      min="0"
-                      defaultValue={salesMap[p.id] ?? 0}
-                      disabled={loading}
-                      className="h-8 w-24 rounded-lg border border-input bg-background px-2.5 text-center text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:opacity-50"
-                    />
-                  </td>
-                </tr>
-              ))}
+              {products.map((p, idx) => {
+                const isFocused = focusedId === p.id;
+                return (
+                  <tr
+                    key={p.id}
+                    className={cn(
+                      "border-b border-border last:border-0 transition-colors",
+                      isFocused
+                        ? "bg-primary/10"
+                        : idx % 2 === 1
+                          ? "bg-muted/25 hover:bg-muted/40"
+                          : "hover:bg-muted/15",
+                    )}
+                  >
+                    <td className={cn(
+                      "px-4 py-2.5 tabular-nums text-xs font-mono border-l-2 transition-colors",
+                      isFocused ? "border-l-primary text-primary font-semibold" : "border-l-transparent text-muted-foreground/60",
+                    )}>
+                      {String(idx + 1).padStart(2, "0")}
+                    </td>
+                    <td className="px-4 py-2.5">
+                      <span className="font-mono text-xs text-muted-foreground bg-muted rounded px-1.5 py-0.5">
+                        {p.sku}
+                      </span>
+                    </td>
+                    <td className={cn("px-4 py-2.5 font-medium transition-colors", isFocused ? "text-primary" : "text-foreground")}>
+                      {p.name}
+                    </td>
+                    <td className="px-4 py-2.5 text-center">
+                      <span className="text-xs text-muted-foreground">
+                        {MOVEMENT_LABEL[p.movement_category] ?? p.movement_category}
+                      </span>
+                    </td>
+                    <td className="px-4 py-2.5">
+                      <div className="flex items-center justify-center gap-2">
+                        <input
+                          type="number"
+                          id={`qty_${p.id}`}
+                          name={`qty_${p.id}`}
+                          min="0"
+                          defaultValue={salesMap[p.id] ?? 0}
+                          disabled={loading}
+                          aria-label={`Qty terjual ${p.name}`}
+                          onFocus={() => setFocusedId(p.id)}
+                          onBlur={() => setFocusedId(null)}
+                          className="h-8 w-20 rounded-lg border border-input bg-background px-2.5 text-center text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 disabled:opacity-50"
+                        />
+                        <span className="text-xs text-muted-foreground w-6">unit</span>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
 
