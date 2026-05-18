@@ -65,7 +65,7 @@ export default async function ProductsPage({
     query = query.eq("is_active", false);
   }
 
-  const sortCol = ["name", "current_stock", "created_at"].includes(params.sort ?? "")
+  const sortCol = ["name", "sku", "current_stock", "created_at"].includes(params.sort ?? "")
     ? params.sort!
     : "name";
 

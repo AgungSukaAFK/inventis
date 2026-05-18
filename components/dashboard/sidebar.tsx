@@ -33,7 +33,7 @@ type NavGroup = {
   icon: React.ElementType;
   roles: UserRole[] | "all";
   basePath: string;
-  children: { label: string; href: string }[];
+  children: { label: string; href: string; roles?: UserRole[] | "all" }[];
 };
 
 type NavItem = NavLink | NavGroup;
@@ -64,18 +64,22 @@ const navItems: NavItem[] = [
     type: "group",
     label: "Kalkulasi TOPSIS",
     icon: Calculator,
-    roles: ["kepala_gudang", "kepala_toko", "owner"],
+    roles: ["kepala_gudang"],
     basePath: "/dashboard/calculations",
     children: [
       { label: "Priority Ranking", href: "/dashboard/calculations/priority-ranking" },
     ],
   },
   {
-    type: "link",
+    type: "group",
     label: "Laporan",
-    href: "/dashboard/reports",
     icon: BarChart3,
-    roles: ["owner"],
+    roles: ["owner", "kepala_toko"],
+    basePath: "/dashboard/reports",
+    children: [
+      { label: "Laporan PR",         href: "/dashboard/reports/priority-ranking", roles: ["owner", "kepala_toko"] },
+      { label: "Laporan Penjualan",  href: "/dashboard/reports/sales",            roles: ["owner"] },
+    ],
   },
   {
     type: "link",
@@ -85,15 +89,18 @@ const navItems: NavItem[] = [
     roles: ["owner"],
   },
   {
-    type: "group",
-    label: "Pengaturan",
+    type: "link",
+    label: "Kategori Barang",
+    href: "/dashboard/settings/categories",
     icon: Settings,
     roles: ["kepala_toko"],
-    basePath: "/dashboard/settings",
-    children: [
-      { label: "Kategori Barang", href: "/dashboard/settings/categories" },
-      { label: "Priority Ranking", href: "/dashboard/settings/priority-ranking" },
-    ],
+  },
+  {
+    type: "link",
+    label: "Pengaturan TOPSIS",
+    href: "/dashboard/settings/priority-ranking",
+    icon: Settings,
+    roles: ["kepala_gudang"],
   },
   {
     type: "link",
@@ -109,8 +116,11 @@ function isVisible(item: NavItem, role: UserRole | undefined) {
   return item.roles === "all" || item.roles.includes(role);
 }
 
-function NavGroupItem({ item, pathname }: { item: NavGroup; pathname: string }) {
-  const isChildActive = item.children.some((c) => pathname.startsWith(c.href));
+function NavGroupItem({ item, pathname, role }: { item: NavGroup; pathname: string; role: UserRole | undefined }) {
+  const visibleChildren = item.children.filter((c) =>
+    !c.roles || c.roles === "all" || (role && c.roles.includes(role)),
+  );
+  const isChildActive = visibleChildren.some((c) => pathname.startsWith(c.href));
   const [open, setOpen] = useState(true);
   const Icon = item.icon;
 
@@ -149,7 +159,7 @@ function NavGroupItem({ item, pathname }: { item: NavGroup; pathname: string }) 
           {/* vertical guide line */}
           <span className="absolute left-3 top-1 bottom-1 w-px bg-border" />
           <div className="space-y-0.5">
-            {item.children.map((child) => {
+            {visibleChildren.map((child) => {
               const active = pathname.startsWith(child.href);
               return (
                 <Link
@@ -210,7 +220,7 @@ export function Sidebar() {
           if (!isVisible(item, profile?.role)) return null;
 
           if (item.type === "group") {
-            return <NavGroupItem key={item.basePath} item={item} pathname={pathname} />;
+            return <NavGroupItem key={item.basePath} item={item} pathname={pathname} role={profile?.role} />;
           }
 
           const Icon = item.icon;

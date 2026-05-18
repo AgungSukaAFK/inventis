@@ -14,7 +14,7 @@ import type { CriteriaWithSubs } from "./actions";
 import type { SubCriteria } from "@/lib/supabase/types";
 
 const METRIC_LABEL: Record<string, string> = {
-  avg_daily_sales:   "Rata-rata penjualan/hari",
+  avg_daily_sales:   "Tingkat penjualan/bulan",
   current_stock:     "Stok saat ini",
   purchase_price:    "Harga modal",
   margin_percentage: "Margin keuntungan (%)",
