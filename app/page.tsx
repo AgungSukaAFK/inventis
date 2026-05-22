@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { NavLink } from "@/components/landing-nav";
 
 export default function Home() {
   return (
@@ -12,8 +13,8 @@ export default function Home() {
             <Image
               src="/logo-bj.png"
               alt="Banten Jaya Sport Fashion"
-              width={80}
-              height={80}
+              width={50}
+              height={50}
               className="rounded-full w-auto h-auto"
             />
             <div className="leading-tight">
@@ -27,15 +28,15 @@ export default function Home() {
           </div>
 
           <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
-            <a href="#tentang" className="hover:text-foreground transition-colors">
+            <NavLink href="#tentang" className="hover:text-foreground transition-colors">
               Tentang
-            </a>
-            <a href="#fitur" className="hover:text-foreground transition-colors">
+            </NavLink>
+            <NavLink href="#fitur" className="hover:text-foreground transition-colors">
               Fitur
-            </a>
-            <a href="#manfaat" className="hover:text-foreground transition-colors">
+            </NavLink>
+            <NavLink href="#manfaat" className="hover:text-foreground transition-colors">
               Manfaat
-            </a>
+            </NavLink>
           </nav>
 
           <div className="flex items-center gap-2">
@@ -74,12 +75,12 @@ export default function Home() {
               >
                 Masuk ke Sistem
               </Link>
-              <a
+              <NavLink
                 href="#fitur"
                 className="inline-flex items-center justify-center rounded-full border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-accent"
               >
                 Lihat Fitur
-              </a>
+              </NavLink>
             </div>
           </div>
 
@@ -138,7 +139,7 @@ export default function Home() {
         </section>
 
         {/* Tentang */}
-        <section id="tentang" className="mt-24">
+        <section id="tentang" className="mt-24 scroll-mt-32">
           <div className="grid gap-10 lg:grid-cols-[auto_1fr] lg:items-start">
             <div className="flex justify-center">
               <Image
@@ -162,30 +163,32 @@ export default function Home() {
               </p>
               <p className="mt-5 max-w-2xl leading-8 text-muted-foreground">
                 Berdiri sejak <strong className="text-foreground">1990</strong>,
-                Banten Jaya Sport Fashion adalah toko ritel perlengkapan olahraga
-                yang melayani masyarakat Kota Serang dan sekitarnya. Dimulai dari
-                penjualan pakaian dan sepatu olahraga, kini toko menyediakan
-                jersey, perlengkapan bulu tangkis, tas olahraga, dan berbagai
-                aksesoris sport sesuai kebutuhan pelanggan.
+                Banten Jaya Sport Fashion adalah toko ritel perlengkapan
+                olahraga yang melayani masyarakat Kota Serang dan sekitarnya.
+                Dimulai dari penjualan pakaian dan sepatu olahraga, kini toko
+                menyediakan jersey, perlengkapan bulu tangkis, tas olahraga, dan
+                berbagai aksesoris sport sesuai kebutuhan pelanggan.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
-                {["Sejak 1990", "Kota Serang, Banten", "Perlengkapan Olahraga Lengkap"].map(
-                  (tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-full border border-border bg-card px-4 py-1.5 text-sm font-medium text-muted-foreground"
-                    >
-                      {tag}
-                    </span>
-                  ),
-                )}
+                {[
+                  "Sejak 1990",
+                  "Kota Serang, Banten",
+                  "Perlengkapan Olahraga Lengkap",
+                ].map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full border border-border bg-card px-4 py-1.5 text-sm font-medium text-muted-foreground"
+                  >
+                    {tag}
+                  </span>
+                ))}
               </div>
             </div>
           </div>
         </section>
 
         {/* Fitur */}
-        <section id="fitur" className="mt-24">
+        <section id="fitur" className="mt-24 scroll-mt-32">
           <div className="text-center">
             <p className="text-sm font-semibold uppercase tracking-widest text-primary">
               Fitur Sistem
@@ -203,14 +206,6 @@ export default function Home() {
               {
                 label: "Priority Ranking",
                 desc: "Urutan restock optimal dari perhitungan TOPSIS agar anggaran dialokasikan ke barang yang paling mendesak.",
-              },
-              {
-                label: "Restock Calculator",
-                desc: "Hitung kuantitas restock yang efisien berdasarkan hasil TOPSIS dan anggaran yang tersedia.",
-              },
-              {
-                label: "Adaptive Safety Stock",
-                desc: "Penyesuaian stok aman secara otomatis mengikuti tren penjualan dan kapasitas anggaran toko.",
               },
               {
                 label: "Informative Result",
@@ -242,7 +237,7 @@ export default function Home() {
         {/* Manfaat — selalu gelap, pakai surface-inverse */}
         <section
           id="manfaat"
-          className="mt-24 rounded-[2rem] px-8 py-14 shadow-xl"
+          className="mt-24 scroll-mt-32 rounded-[2rem] px-8 py-14 shadow-xl"
           style={{
             backgroundColor: "var(--surface-inverse)",
             color: "var(--surface-inverse-foreground)",
@@ -261,7 +256,10 @@ export default function Home() {
               </h2>
               <p
                 className="mt-5 max-w-xl leading-8"
-                style={{ color: "var(--surface-inverse-foreground)", opacity: 0.7 }}
+                style={{
+                  color: "var(--surface-inverse-foreground)",
+                  opacity: 0.7,
+                }}
               >
                 Sistem ini dirancang khusus untuk kondisi toko Banten Jaya —
                 memastikan anggaran tidak terbuang untuk barang yang
@@ -293,7 +291,9 @@ export default function Home() {
                   className="rounded-2xl p-5"
                   style={{ backgroundColor: "rgba(255,255,255,0.05)" }}
                 >
-                  <p className="text-sm font-semibold text-primary">{b.title}</p>
+                  <p className="text-sm font-semibold text-primary">
+                    {b.title}
+                  </p>
                   <p
                     className="mt-2 text-sm leading-6"
                     style={{

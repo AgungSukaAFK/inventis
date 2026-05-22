@@ -266,10 +266,25 @@ export default async function LaporanPRDetailPage({
         </div>
       )}
 
-      {/* Footer print */}
-      <div className="hidden print:flex mt-8 pt-4 border-t border-gray-300 text-xs text-gray-400 justify-between">
-        <span>Toko Banten Jaya Sport Fashion — Sistem Pendukung Keputusan Inventaris</span>
-        <span>Dokumen ini digenerate otomatis oleh sistem. Bukan dokumen resmi pengadaan.</span>
+      {/* Disclaimer + footer — dijaga tetap satu blok saat cetak */}
+      <div className="break-inside-avoid">
+        <div className="rounded-lg border border-border bg-muted/30 px-5 py-4 print:border-black/20 print:bg-gray-50">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 print:text-gray-500">
+            Catatan Penting
+          </p>
+          <p className="text-sm leading-6 text-muted-foreground print:text-gray-600 print:text-xs print:leading-5">
+            Data di atas merupakan <strong className="text-foreground print:text-black">rekomendasi</strong> yang dihasilkan
+            oleh Sistem Pendukung Keputusan (SPK) menggunakan metode <strong className="text-foreground print:text-black">TOPSIS</strong>.
+            Hasil ini bersifat analitis dan hanya sebagai bahan pertimbangan — bukan keputusan final.
+            Keputusan restock tetap sepenuhnya menjadi wewenang dan tanggung jawab pemilik toko.
+          </p>
+        </div>
+
+        {/* Footer print */}
+        <div className="hidden print:flex mt-6 pt-4 border-t border-gray-300 text-xs text-gray-400 justify-between">
+          <span>Toko Banten Jaya Sport Fashion — Sistem Pendukung Keputusan Inventaris</span>
+          <span>Dokumen ini digenerate otomatis oleh sistem. Bukan dokumen resmi pengadaan.</span>
+        </div>
       </div>
     </div>
   );
