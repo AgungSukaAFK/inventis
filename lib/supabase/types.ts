@@ -139,31 +139,6 @@ export type Database = {
         };
         Update: Partial<Omit<Profile, "id">>;
       };
-      notifications: {
-        Row: {
-          id: string;
-          user_id: string;
-          title: string;
-          message: string;
-          type: string;
-          link_url: string | null;
-          related_id: string | null;
-          is_read: boolean;
-          created_at: string;
-        };
-        Insert: {
-          user_id: string;
-          title: string;
-          message: string;
-          type?: string;
-          link_url?: string | null;
-          related_id?: string | null;
-          is_read?: boolean;
-        };
-        Update: Partial<{
-          is_read: boolean;
-        }>;
-      };
       categories: {
         Row: Category;
         Insert: Omit<Category, "id" | "created_at" | "updated_at">;
