@@ -12,7 +12,7 @@ export default async function PriorityRankingSettingsPage() {
     .eq("id", user!.id)
     .single();
 
-  if (profileData?.role !== "kepala_toko") redirect("/dashboard");
+  if (profileData?.role !== "kepala_gudang") redirect("/dashboard");
 
   const criteria = await getCriteriaWithSubs();
   const activeCriteria = criteria.filter((c) => c.is_active);

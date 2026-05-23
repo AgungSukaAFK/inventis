@@ -24,9 +24,12 @@ export default async function CategoriesPage() {
     .eq("id", user!.id)
     .single();
 
-  if (profileData?.role !== "kepala_toko") {
+  const role = profileData?.role;
+  if (!role || !["owner", "kepala_toko", "kepala_gudang"].includes(role)) {
     redirect("/dashboard");
   }
+
+  const readonly = role !== "kepala_toko";
 
   const { data: categories } = await supabase
     .from("categories")
@@ -38,7 +41,9 @@ export default async function CategoriesPage() {
       <div>
         <h1 className="text-2xl font-semibold text-foreground">Kategori Barang</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Kelola kategori untuk pengelompokan barang di halaman produk.
+          {readonly
+            ? "Daftar kategori barang yang tersedia dalam sistem."
+            : "Kelola kategori untuk pengelompokan barang di halaman produk."}
         </p>
       </div>
 
@@ -51,11 +56,11 @@ export default async function CategoriesPage() {
                 Kategori digunakan untuk mengelompokkan barang di halaman produk.
               </CardDescription>
             </div>
-            <AddCategoryDialog />
+            {!readonly && <AddCategoryDialog />}
           </div>
         </CardHeader>
         <CardContent className="px-0 pb-0">
-          <CategoriesList categories={(categories ?? []) as Category[]} />
+          <CategoriesList categories={(categories ?? []) as Category[]} readonly={readonly} />
         </CardContent>
       </Card>
     </div>

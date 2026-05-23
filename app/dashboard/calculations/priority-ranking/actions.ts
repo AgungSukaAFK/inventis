@@ -19,7 +19,7 @@ export type StepCriteria = {
 export type TopsisStepsData = {
   criteria: StepCriteria[];
   products: { name: string; sku: string; rank: number }[];
-  rawMetrics: number[][];   // actual values (avg_daily, stok, harga, margin)
+  rawMetrics: number[][];   // actual values (monthly_sales, stok, harga, margin)
   scores: number[][];       // 1–5 dari sub-kriteria
   colNorms: number[];
   normalized: number[][];
@@ -39,7 +39,7 @@ const METRIC_TO_RESULT_KEY: Record<string, string> = {
 };
 
 const METRIC_UNIT: Record<string, string> = {
-  avg_daily_sales:   "unit/hari",
+  avg_daily_sales:   "unit/bln",
   current_stock:     "unit",
   purchase_price:    "Rp",
   margin_percentage: "%",
@@ -92,7 +92,7 @@ export async function getCalculationDetail(id: string) {
 
 type ProductMetrics = {
   productId: string;
-  avgDailySales: number;
+  monthlySales: number;
   currentStock: number;
   purchasePrice: number;
   sellingPrice: number;
@@ -113,7 +113,7 @@ function matchScore(subs: SubCritRow[], rawValue: number): number {
 }
 
 const METRIC_REGISTRY: Record<string, (m: ProductMetrics) => number> = {
-  avg_daily_sales:   (m) => m.avgDailySales,
+  avg_daily_sales:   (m) => m.monthlySales,
   current_stock:     (m) => m.currentStock,
   purchase_price:    (m) => m.purchasePrice,
   margin_percentage: (m) => m.marginPercentage,
@@ -179,17 +179,9 @@ export async function createPriorityRankingCalculation(
   if (salesErr) return { error: "Gagal mengambil data penjualan." };
 
   // ── 4. Hitung metrik per produk ───────────────────────────────────────────
-  const start     = new Date(periodStart);
-  const end       = new Date(periodEnd);
-  const totalDays = Math.max(
-    1,
-    Math.round((end.getTime() - start.getTime()) / 86400000) + 1,
-  );
-
   const metrics: ProductMetrics[] = products.map((p) => {
     const productSales = (sales ?? []).filter((s) => s.product_id === p.id);
-    const totalSold    = productSales.reduce((sum, s) => sum + s.quantity_sold, 0);
-    const avgDailySales = totalSold / totalDays;
+    const monthlySales = productSales.reduce((sum, s) => sum + s.quantity_sold, 0);
 
     const purchasePrice    = Number(p.purchase_price);
     const sellingPrice     = Number(p.selling_price);
@@ -198,9 +190,9 @@ export async function createPriorityRankingCalculation(
       : 0;
 
     return {
-      productId:         p.id,
-      avgDailySales,
-      currentStock:      p.current_stock,
+      productId:    p.id,
+      monthlySales,
+      currentStock: p.current_stock,
       purchasePrice,
       sellingPrice,
       marginPercentage,
@@ -279,7 +271,7 @@ export async function createPriorityRankingCalculation(
       recommended_qty:         0,
       estimated_cost:          0,
       // Snapshot metrik saat kalkulasi dilakukan
-      avg_daily_sales:         m.avgDailySales,
+      avg_daily_sales:         m.monthlySales,
       current_stock_snapshot:  m.currentStock,
       purchase_price_snapshot: m.purchasePrice,
       margin_percentage:       m.marginPercentage,

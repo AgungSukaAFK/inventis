@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { createClient as createAdminClient } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 
 type AuditLogInsert = {
@@ -18,19 +18,6 @@ async function insertAuditLog(supabase: any, log: AuditLogInsert) {
   await supabase.from("audit_logs").insert(log);
 }
 
-function getAdminClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!supabaseUrl || !serviceRoleKey) {
-    return {
-      error:
-        "Konfigurasi server Supabase belum lengkap. Pastikan NEXT_PUBLIC_SUPABASE_URL dan SUPABASE_SERVICE_ROLE_KEY sudah diset.",
-    };
-  }
-
-  return { client: createAdminClient(supabaseUrl, serviceRoleKey) };
-}
 
 async function requireOwner() {
   const supabase = await createClient();
@@ -51,13 +38,7 @@ async function requireOwner() {
 
 export async function createUser(formData: FormData) {
   const { supabase, userId } = await requireOwner();
-  const adminResult = getAdminClient();
-
-  if ("error" in adminResult) {
-    return { error: adminResult.error };
-  }
-
-  const admin = adminResult.client;
+  const admin = createAdminClient();
 
   const email = formData.get("email") as string;
   const full_name = formData.get("full_name") as string;
@@ -109,13 +90,16 @@ export async function toggleUserActive(targetId: string, isActive: boolean) {
     return { error: "Tidak dapat menonaktifkan akun sendiri." };
   }
 
+  const admin = createAdminClient();
+
   const { data: oldData } = await supabase
     .from("profiles")
     .select("is_active, full_name")
     .eq("id", targetId)
     .single();
 
-  const { error } = await supabase
+  // Gunakan admin client agar bypass RLS — regular client hanya bisa update profil sendiri
+  const { error } = await admin
     .from("profiles")
     .update({ is_active: isActive })
     .eq("id", targetId);

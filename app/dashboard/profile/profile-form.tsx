@@ -5,6 +5,7 @@ import { updateProfile, changePassword } from "./actions";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { PhoneInput } from "@/components/ui/phone-input";
 import {
   Card,
   CardContent,
@@ -34,7 +35,8 @@ export function ProfileForm({ profile }: { profile: Profile }) {
   >(changePassword, undefined);
 
   return (
-    <div className="space-y-6 max-w-xl">
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
       {/* Info Akun */}
       <Card>
         <CardHeader>
@@ -84,16 +86,24 @@ export function ProfileForm({ profile }: { profile: Profile }) {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="phone">No. Telepon</Label>
-                <Input
+                <PhoneInput
                   id="phone"
                   name="phone"
-                  type="tel"
                   defaultValue={profile.phone ?? ""}
                 />
               </div>
             </div>
 
-            <div className="flex justify-end">
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-muted-foreground">
+                Akun dibuat pada{" "}
+                {new Date(profile.created_at).toLocaleDateString("id-ID", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+                .
+              </p>
               <Button type="submit" disabled={profilePending}>
                 {profilePending ? "Menyimpan..." : "Simpan Perubahan"}
               </Button>
@@ -166,16 +176,7 @@ export function ProfileForm({ profile }: { profile: Profile }) {
         </form>
       </Card>
 
-      {/* Bergabung sejak */}
-      <p className="text-xs text-muted-foreground px-1">
-        Akun dibuat pada{" "}
-        {new Date(profile.created_at).toLocaleDateString("id-ID", {
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        })}
-        .
-      </p>
+      </div>
     </div>
   );
 }

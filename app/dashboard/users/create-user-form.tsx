@@ -5,6 +5,7 @@ import { createUser } from "./actions";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { DialogFooter, DialogClose } from "@/components/ui/dialog";
 
 const ROLES = [
@@ -40,7 +41,7 @@ export function CreateUserForm({ onSuccess }: { onSuccess?: () => void }) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="phone">No. Telepon</Label>
-            <Input id="phone" name="phone" type="tel" />
+            <PhoneInput id="phone" name="phone" />
           </div>
         </div>
 

@@ -20,6 +20,7 @@ const STATUS_OPTIONS = [
 
 const SORT_OPTIONS = [
   { value: "name", label: "Nama" },
+  { value: "sku", label: "SKU" },
   { value: "current_stock", label: "Stok" },
   { value: "created_at", label: "Tanggal Dibuat" },
 ];
@@ -58,7 +59,6 @@ export function ProductsFilters({ categories }: Props) {
 
   return (
     <div className="flex flex-wrap gap-2">
-      {/* Search — flex wrapper avoids absolute-positioning issues with Input internals */}
       <div className="flex h-8 items-center gap-1.5 rounded-lg border border-input bg-background px-2.5 text-sm focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 w-52">
         <Search className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
         <input

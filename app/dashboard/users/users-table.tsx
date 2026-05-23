@@ -1,8 +1,17 @@
 "use client";
 
-import { useTransition } from "react";
+import { useTransition, useState } from "react";
 import { toggleUserActive, updateUserRole } from "./actions";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,15 +40,16 @@ const roleOptions = [
 export function UsersTable({ users }: { users: Profile[] }) {
   const { profile: currentUser } = useUser();
   const [isPending, startTransition] = useTransition();
+  const [confirmTarget, setConfirmTarget] = useState<Profile | null>(null);
 
-  function handleToggleActive(user: Profile) {
+  function confirmToggleActive() {
+    if (!confirmTarget) return;
+    const target = confirmTarget;
+    setConfirmTarget(null);
     startTransition(async () => {
-      const result = await toggleUserActive(user.id, !user.is_active);
+      const result = await toggleUserActive(target.id, !target.is_active);
       if (result.error) toast.error(result.error);
-      else
-        toast.success(
-          `Pengguna ${!user.is_active ? "diaktifkan" : "dinonaktifkan"}.`,
-        );
+      else toast.success(`Pengguna berhasil ${!target.is_active ? "diaktifkan" : "dinonaktifkan"}.`);
     });
   }
 
@@ -127,19 +137,16 @@ export function UsersTable({ users }: { users: Profile[] }) {
                           <DropdownMenuItem
                             key={r.value}
                             disabled={user.role === r.value}
-                            onSelect={() => handleChangeRole(user.id, r.value)}
+                            onClick={() => handleChangeRole(user.id, r.value)}
                           >
                             {r.label}
                           </DropdownMenuItem>
                         ))}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
-                          className={
-                            user.is_active
-                              ? "text-destructive focus:text-destructive"
-                              : "text-green-600 focus:text-green-600"
-                          }
-                          onSelect={() => handleToggleActive(user)}
+                          variant={user.is_active ? "destructive" : undefined}
+                          className={!user.is_active ? "text-green-600 focus:text-green-600" : ""}
+                          onClick={() => setConfirmTarget(user)}
                         >
                           {user.is_active ? "Nonaktifkan" : "Aktifkan"}
                         </DropdownMenuItem>
@@ -157,6 +164,33 @@ export function UsersTable({ users }: { users: Profile[] }) {
           Belum ada pengguna terdaftar.
         </div>
       )}
+
+      <Dialog open={confirmTarget !== null} onOpenChange={(open) => { if (!open) setConfirmTarget(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {confirmTarget?.is_active ? "Nonaktifkan Pengguna?" : "Aktifkan Pengguna?"}
+            </DialogTitle>
+            <DialogDescription>
+              {confirmTarget?.is_active
+                ? `${confirmTarget?.full_name} tidak akan bisa login setelah dinonaktifkan.`
+                : `${confirmTarget?.full_name} akan bisa login kembali setelah diaktifkan.`}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setConfirmTarget(null)} disabled={isPending}>
+              Batal
+            </Button>
+            <Button
+              variant={confirmTarget?.is_active ? "destructive" : "default"}
+              onClick={confirmToggleActive}
+              disabled={isPending}
+            >
+              {isPending ? "Menyimpan..." : confirmTarget?.is_active ? "Ya, Nonaktifkan" : "Ya, Aktifkan"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

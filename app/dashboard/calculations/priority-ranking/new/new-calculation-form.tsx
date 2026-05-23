@@ -91,7 +91,7 @@ export function NewCalculationForm() {
         <div className="px-6 py-5 space-y-4">
           <h2 className="text-sm font-semibold text-foreground">Periode Data Penjualan</h2>
           <p className="text-xs text-muted-foreground -mt-2">
-            Data penjualan bulan yang dipilih digunakan untuk menghitung rata-rata penjualan harian (C1).
+            Total penjualan bulan yang dipilih digunakan sebagai nilai C1 (Tingkat Penjualan).
           </p>
           <input type="hidden" name="period_start" value={periodStart} />
           <input type="hidden" name="period_end"   value={periodEnd} />
