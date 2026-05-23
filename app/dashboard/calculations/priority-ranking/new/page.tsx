@@ -14,10 +14,7 @@ export default async function NewPriorityRankingPage() {
     .eq("id", user!.id)
     .single();
 
-  const role = profileData?.role;
-  if (!role || !["kepala_gudang", "kepala_toko"].includes(role)) {
-    redirect("/dashboard/calculations/priority-ranking");
-  }
+  if (profileData?.role !== "kepala_gudang") redirect("/dashboard/calculations/priority-ranking");
 
   return (
     <div className="space-y-6 max-w-2xl">

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useUser } from "@/lib/hooks/use-user";
-import { createClient } from "@/lib/supabase/client";
+import { logout } from "@/app/(auth)/actions";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -17,7 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Bell, LogOut, User } from "lucide-react";
-import { toast } from "sonner";
+
 
 const roleLabel: Record<string, string> = {
   owner: "Owner",
@@ -32,16 +32,7 @@ export function Topbar() {
   async function handleLogout() {
     if (isPending) return;
     setIsPending(true);
-
-    const supabase = createClient();
-    const { error } = await supabase.auth.signOut();
-
-    if (error) {
-      setIsPending(false);
-      toast.error("Gagal logout. Silakan coba lagi.");
-      return;
-    }
-    window.location.replace("/login");
+    await logout();
   }
 
   async function handleProfile() {

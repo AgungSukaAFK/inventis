@@ -37,6 +37,20 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
+  // Kick out deactivated users from dashboard
+  if (user && pathname.startsWith("/dashboard")) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("is_active")
+      .eq("id", user.id)
+      .single();
+
+    if (!profile?.is_active) {
+      await supabase.auth.signOut();
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+  }
+
   // Redirect authenticated users away from login page
   if (
     user &&

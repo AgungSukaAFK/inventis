@@ -1,21 +1,20 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { getPriorityRankingCalculations } from "./actions";
-import { Plus, FileText, CheckCircle2, Archive, FilePen } from "lucide-react";
+import { getPriorityRankingCalculations } from "@/app/dashboard/calculations/priority-ranking/actions";
+import { FileText, Printer } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CalculationStatus } from "@/lib/supabase/types";
 
 function StatusBadge({ status }: { status: CalculationStatus }) {
   const map = {
-    completed: { label: "Selesai",     icon: CheckCircle2, cls: "bg-green-500/10 text-green-700 dark:text-green-400" },
-    draft:     { label: "Draft",       icon: FilePen,      cls: "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400" },
-    archived:  { label: "Diarsipkan",  icon: Archive,      cls: "bg-muted text-muted-foreground" },
+    completed: { label: "Selesai",    cls: "bg-green-500/10 text-green-700 dark:text-green-400" },
+    draft:     { label: "Draft",      cls: "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400" },
+    archived:  { label: "Diarsipkan", cls: "bg-muted text-muted-foreground" },
   } as const;
-  const { label, icon: Icon, cls } = map[status] ?? map.draft;
+  const { label, cls } = map[status] ?? map.draft;
   return (
-    <span className={cn("inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium", cls)}>
-      <Icon className="h-3 w-3" />
+    <span className={cn("inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium", cls)}>
       {label}
     </span>
   );
@@ -27,7 +26,7 @@ function formatDate(iso: string) {
   });
 }
 
-export default async function PriorityRankingPage() {
+export default async function LaporanPRPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -37,41 +36,24 @@ export default async function PriorityRankingPage() {
     .eq("id", user!.id)
     .single();
 
-  const role = profileData?.role;
-  if (role !== "kepala_gudang") redirect("/dashboard");
+  if (!["owner", "kepala_toko"].includes(profileData?.role ?? "")) redirect("/dashboard");
 
   const calculations = await getPriorityRankingCalculations();
-  const canCreate = true;
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold text-foreground">Priority Ranking</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Riwayat kalkulasi TOPSIS untuk penentuan prioritas restock barang.
-          </p>
-        </div>
-        {canCreate && (
-          <Link
-            href="/dashboard/calculations/priority-ranking/new"
-            className="inline-flex h-9 shrink-0 items-center gap-1.5 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            <Plus className="h-4 w-4" />
-            Kalkulasi Baru
-          </Link>
-        )}
+      <div>
+        <h1 className="text-2xl font-semibold text-foreground">Laporan Priority Ranking</h1>
+        <p className="text-sm text-muted-foreground mt-1">
+          Daftar hasil kalkulasi TOPSIS Priority Ranking. Pilih kalkulasi untuk mencetak laporan.
+        </p>
       </div>
 
       {calculations.length === 0 ? (
         <div className="rounded-xl border border-border bg-card flex flex-col items-center justify-center py-16 gap-3">
           <FileText className="h-8 w-8 text-muted-foreground/50" />
           <p className="text-sm font-medium text-foreground">Belum ada kalkulasi</p>
-          {canCreate && (
-            <p className="text-xs text-muted-foreground text-center max-w-xs">
-              Mulai kalkulasi untuk menentukan urutan prioritas restock produk secara optimal.
-            </p>
-          )}
+          <p className="text-xs text-muted-foreground">Kalkulasi Priority Ranking belum pernah dibuat.</p>
         </div>
       ) : (
         <div className="rounded-xl border border-border bg-card overflow-hidden">
@@ -83,18 +65,14 @@ export default async function PriorityRankingPage() {
                 <th className="px-4 py-3 text-center font-medium text-muted-foreground">Produk</th>
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground">Status</th>
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground">Tanggal</th>
+                <th className="px-4 py-3" />
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {calculations.map((calc) => (
                 <tr key={calc.id} className="hover:bg-muted/20 transition-colors">
                   <td className="px-4 py-3">
-                    <Link
-                      href={`/dashboard/calculations/priority-ranking/${calc.id}`}
-                      className="font-medium text-foreground hover:text-primary transition-colors"
-                    >
-                      {calc.title}
-                    </Link>
+                    <p className="font-medium text-foreground">{calc.title}</p>
                     {calc.description && (
                       <p className="text-xs text-muted-foreground truncate max-w-xs">{calc.description}</p>
                     )}
@@ -112,6 +90,15 @@ export default async function PriorityRankingPage() {
                   </td>
                   <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
                     {formatDate(calc.calculation_date)}
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <Link
+                      href={`/dashboard/reports/priority-ranking/${calc.id}`}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent transition-colors"
+                    >
+                      <Printer className="h-3.5 w-3.5" />
+                      Cetak
+                    </Link>
                   </td>
                 </tr>
               ))}

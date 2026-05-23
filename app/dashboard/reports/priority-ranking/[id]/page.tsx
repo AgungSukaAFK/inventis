@@ -2,9 +2,8 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { getCalculationDetail, getCalculationSteps } from "../actions";
+import { getCalculationDetail } from "@/app/dashboard/calculations/priority-ranking/actions";
 import { PrintButton } from "./print-button";
-import { TopsisSteps } from "./topsis-steps";
 import { cn } from "@/lib/utils";
 
 function formatDate(iso: string) {
@@ -31,7 +30,7 @@ const CRITERIA = [
   { code: "C4", label: "Margin Keuntungan", type: "Benefit", weight: "25%", note: "% dari harga jual" },
 ];
 
-export default async function PriorityRankingDetailPage({
+export default async function LaporanPRDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -47,12 +46,9 @@ export default async function PriorityRankingDetailPage({
     .eq("id", user!.id)
     .single();
 
-  if (profileData?.role !== "kepala_gudang") redirect("/dashboard");
+  if (!["owner", "kepala_toko"].includes(profileData?.role ?? "")) redirect("/dashboard");
 
-  const [detail, steps] = await Promise.all([
-    getCalculationDetail(id),
-    getCalculationSteps(id),
-  ]);
+  const detail = await getCalculationDetail(id);
   if (!detail) notFound();
 
   const { calc, results } = detail;
@@ -65,17 +61,11 @@ export default async function PriorityRankingDetailPage({
   return (
     <div className="space-y-6">
 
-      {/* ── Print-only header — always in DOM so browser loads the image ─── */}
+      {/* Print-only header */}
       <div className="invisible h-0 overflow-hidden print:visible print:h-auto print:overflow-visible print:flex items-center justify-between mb-6 pb-5 border-b-2 border-gray-300">
         <div className="flex items-center gap-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/logo-bj.png"
-            alt="Logo BJ Sport"
-            width={64}
-            height={64}
-            className="object-contain rounded-full"
-          />
+          <img src="/logo-bj.png" alt="Logo" width={64} height={64} className="object-contain rounded-full" />
           <div>
             <p className="text-xs text-gray-500 uppercase tracking-widest">Laporan Sistem Pendukung Keputusan</p>
             <p className="text-lg font-bold text-black leading-tight">Toko Banten Jaya Sport Fashion</p>
@@ -84,20 +74,22 @@ export default async function PriorityRankingDetailPage({
         </div>
         <div className="text-right text-xs text-gray-500 space-y-0.5">
           <p>Tanggal cetak:</p>
-          <p className="font-medium text-gray-700">{new Date().toLocaleDateString("id-ID", { day:"numeric", month:"long", year:"numeric" })}</p>
+          <p className="font-medium text-gray-700">
+            {new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
+          </p>
         </div>
       </div>
 
-      {/* ── Breadcrumb (screen only) ─────────────────────────────────────── */}
+      {/* Breadcrumb */}
       <Link
-        href="/dashboard/calculations/priority-ranking"
+        href="/dashboard/reports/priority-ranking"
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors print:hidden"
       >
         <ChevronLeft className="h-4 w-4" />
-        Priority Ranking
+        Laporan PR
       </Link>
 
-      {/* ── Header ─────────────────────────────────────────────────────────── */}
+      {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-foreground print:text-xl print:font-bold">{calc.title}</h1>
@@ -115,7 +107,7 @@ export default async function PriorityRankingDetailPage({
         </div>
       </div>
 
-      {/* ── Kriteria yang digunakan ─────────────────────────────────────────── */}
+      {/* Kriteria */}
       <div className="rounded-lg border border-border bg-muted/20 p-4 print:border-black/20 print:bg-gray-50">
         <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3 print:text-gray-500">
           Kriteria Penilaian
@@ -141,30 +133,18 @@ export default async function PriorityRankingDetailPage({
         </div>
       </div>
 
-      {/* ── Tabel hasil ────────────────────────────────────────────────────── */}
+      {/* Tabel hasil */}
       {results.length === 0 ? (
         <div className="rounded-xl border border-border bg-card flex items-center justify-center py-16">
           <p className="text-sm text-muted-foreground">Tidak ada hasil kalkulasi.</p>
         </div>
       ) : (
         <div className="rounded-xl border border-border bg-card overflow-x-auto print:overflow-visible print:border-black/20">
-          {/* Section label */}
-          <div className="px-4 py-3 border-b border-border bg-muted/20 flex items-center justify-between print:bg-gray-50 print:border-black/20">
-            <div>
-              <p className="text-sm font-semibold text-foreground print:text-black">Hasil Perangkingan TOPSIS</p>
-              <p className="text-xs text-muted-foreground print:text-gray-500 mt-0.5">
-                Urutan prioritas restock berdasarkan nilai preferensi Vi (semakin tinggi = semakin prioritas)
-              </p>
-            </div>
-            {/* Legend */}
-            <div className="hidden sm:flex items-center gap-3 text-xs text-muted-foreground print:flex print:text-gray-500">
-              <span className="flex items-center gap-1">
-                <span className="inline-block h-2 w-2 rounded-full bg-destructive" /> Stok kritis
-              </span>
-              <span className="flex items-center gap-1">
-                <span className="inline-block h-2 w-2 rounded-full bg-yellow-500" /> Stok rendah
-              </span>
-            </div>
+          <div className="px-4 py-3 border-b border-border bg-muted/20 print:bg-gray-50 print:border-black/20">
+            <p className="text-sm font-semibold text-foreground print:text-black">Hasil Perangkingan TOPSIS</p>
+            <p className="text-xs text-muted-foreground print:text-gray-500 mt-0.5">
+              Urutan prioritas restock berdasarkan nilai preferensi Vi (semakin tinggi = semakin prioritas)
+            </p>
           </div>
 
           <table className="w-full text-sm print:text-xs">
@@ -172,7 +152,6 @@ export default async function PriorityRankingDetailPage({
               <tr className="border-b border-border bg-muted/30 print:bg-gray-100 print:border-black/20">
                 <th className="px-4 py-3 text-center font-medium text-muted-foreground w-14 print:text-gray-600">Rank</th>
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground print:text-gray-600">Nama Produk</th>
-                <th className="px-3 py-3 text-center font-medium text-muted-foreground print:text-gray-600 hidden sm:table-cell">Gerak</th>
                 <th className="px-3 py-3 text-right font-medium text-muted-foreground print:text-gray-600">
                   <span className="block text-xs font-semibold">C1</span>
                   <span className="block text-xs font-normal">/Bulan</span>
@@ -181,11 +160,11 @@ export default async function PriorityRankingDetailPage({
                   <span className="block text-xs font-semibold">C2</span>
                   <span className="block text-xs font-normal">Stok</span>
                 </th>
-                <th className="px-3 py-3 text-right font-medium text-muted-foreground print:text-gray-600 hidden md:table-cell">
+                <th className="px-3 py-3 text-right font-medium text-muted-foreground print:text-gray-600">
                   <span className="block text-xs font-semibold">C3</span>
                   <span className="block text-xs font-normal">Harga Modal</span>
                 </th>
-                <th className="px-3 py-3 text-right font-medium text-muted-foreground print:text-gray-600 hidden md:table-cell">
+                <th className="px-3 py-3 text-right font-medium text-muted-foreground print:text-gray-600">
                   <span className="block text-xs font-semibold">C4</span>
                   <span className="block text-xs font-normal">Margin</span>
                 </th>
@@ -193,7 +172,7 @@ export default async function PriorityRankingDetailPage({
                   <span className="block text-xs font-semibold">Vi</span>
                   <span className="block text-xs font-normal">Preferensi</span>
                 </th>
-                <th className="px-3 py-3 text-center font-medium text-muted-foreground print:text-gray-600 hidden sm:table-cell">
+                <th className="px-3 py-3 text-center font-medium text-muted-foreground print:text-gray-600">
                   <span className="block text-xs font-semibold">Prioritas</span>
                 </th>
               </tr>
@@ -222,7 +201,6 @@ export default async function PriorityRankingDetailPage({
                           : "hover:bg-muted/20",
                     )}
                   >
-                    {/* Rank */}
                     <td className="px-4 py-3 text-center">
                       {isTop3 ? (
                         <span className={cn(
@@ -240,55 +218,29 @@ export default async function PriorityRankingDetailPage({
                       )}
                     </td>
 
-                    {/* Produk */}
                     <td className="px-4 py-3">
-                      <p className={cn("font-medium print:text-black", isTop3 ? "text-foreground" : "text-foreground")}>
-                        {r.product?.name ?? "—"}
-                      </p>
+                      <p className="font-medium print:text-black">{r.product?.name ?? "—"}</p>
                       <p className="text-xs text-muted-foreground font-mono print:text-gray-500">{r.product?.sku ?? ""}</p>
                     </td>
 
-                    {/* Gerak */}
-                    <td className="px-3 py-3 text-center hidden sm:table-cell">
-                      {(() => {
-                        const cat = r.product?.movement_category ?? "slow_moving";
-                        const cls: Record<string,string> = {
-                          fast_moving:   "bg-green-500/10 text-green-700 dark:text-green-400",
-                          medium_moving: "bg-yellow-500/10 text-yellow-700 dark:text-yellow-400",
-                          slow_moving:   "bg-muted text-muted-foreground",
-                        };
-                        const lbl: Record<string,string> = { fast_moving:"Fast", medium_moving:"Medium", slow_moving:"Slow" };
-                        return (
-                          <span className={cn("text-xs px-2 py-0.5 rounded-full font-medium print:rounded-none print:bg-transparent print:text-gray-600", cls[cat] ?? cls.slow_moving)}>
-                            {lbl[cat] ?? cat}
-                          </span>
-                        );
-                      })()}
-                    </td>
-
-                    {/* C1 */}
                     <td className="px-3 py-3 text-right tabular-nums text-sm print:text-xs print:text-gray-700">
                       {r.avg_daily_sales != null ? (
                         <span>{r.avg_daily_sales}<span className="text-xs text-muted-foreground ml-0.5 print:text-gray-500"> unit</span></span>
                       ) : "—"}
                     </td>
 
-                    {/* C2 */}
                     <td className={cn("px-3 py-3 text-right tabular-nums text-sm print:text-xs", stockCls)}>
                       {r.current_stock_snapshot != null ? r.current_stock_snapshot : "—"}
                     </td>
 
-                    {/* C3 */}
-                    <td className="px-3 py-3 text-right tabular-nums text-sm text-muted-foreground print:text-xs print:text-gray-700 hidden md:table-cell">
+                    <td className="px-3 py-3 text-right tabular-nums text-sm text-muted-foreground print:text-xs print:text-gray-700">
                       {r.purchase_price_snapshot != null ? formatRupiah(r.purchase_price_snapshot) : "—"}
                     </td>
 
-                    {/* C4 */}
-                    <td className="px-3 py-3 text-right tabular-nums text-sm text-muted-foreground print:text-xs print:text-gray-700 hidden md:table-cell">
+                    <td className="px-3 py-3 text-right tabular-nums text-sm text-muted-foreground print:text-xs print:text-gray-700">
                       {r.margin_percentage != null ? `${r.margin_percentage.toFixed(1)}%` : "—"}
                     </td>
 
-                    {/* Vi + bar */}
                     <td className="px-3 py-3 text-right">
                       <span className={cn("text-sm font-semibold tabular-nums print:text-xs", isTop3 ? "text-primary print:text-blue-700" : "text-foreground print:text-black")}>
                         {vi.toFixed(4)}
@@ -301,8 +253,7 @@ export default async function PriorityRankingDetailPage({
                       </div>
                     </td>
 
-                    {/* Prioritas label */}
-                    <td className="px-3 py-3 text-center hidden sm:table-cell">
+                    <td className="px-3 py-3 text-center">
                       <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full border print:rounded-none print:border-0 print:text-gray-700", prio.cls)}>
                         {prio.label}
                       </span>
@@ -315,53 +266,26 @@ export default async function PriorityRankingDetailPage({
         </div>
       )}
 
-      {/* ── Keterangan & Disclaimer ─────────────────────────────────────────── */}
-      <div className="rounded-xl border border-border bg-card p-5 space-y-4 print:border-black/20 print:bg-white print:rounded-none print:border print:p-4">
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide print:text-gray-500">
-          Keterangan &amp; Catatan Sistem
-        </p>
-
-        <div className="space-y-3 text-sm text-muted-foreground print:text-gray-700 print:text-xs leading-relaxed">
-          <p>
-            Hasil perangkingan di atas merupakan <strong className="text-foreground print:text-black">rekomendasi otomatis</strong> yang
-            dihasilkan oleh Sistem Pendukung Keputusan (SPK) berbasis metode{" "}
-            <strong className="text-foreground print:text-black">TOPSIS</strong> (<em>Technique for Order of Preference by Similarity to Ideal Solution</em>).
-            Sistem menganalisis {calc.total_alternatives} produk aktif berdasarkan {CRITERIA.length} kriteria terbobot
-            menggunakan data penjualan pada periode <strong className="text-foreground print:text-black">{periodeStr}</strong>.
+      {/* Disclaimer + footer — dijaga tetap satu blok saat cetak */}
+      <div className="break-inside-avoid">
+        <div className="rounded-lg border border-border bg-muted/30 px-5 py-4 print:border-black/20 print:bg-gray-50">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5 print:text-gray-500">
+            Catatan Penting
           </p>
-
-          <p>
-            Nilai preferensi (Vi) merepresentasikan kedekatan relatif setiap produk terhadap solusi ideal positif.
-            Semakin mendekati nilai 1, semakin tinggi prioritas produk tersebut untuk direstok berdasarkan kombinasi
-            tingkat penjualan, kondisi stok, harga modal, dan margin keuntungan.
-          </p>
-
-          <div className="rounded-lg bg-muted/40 border border-border px-4 py-3 print:bg-gray-50 print:border-gray-200">
-            <p className="text-xs font-semibold text-foreground mb-2 print:text-black">Keterangan Warna Stok (C2):</p>
-            <div className="flex flex-wrap gap-x-5 gap-y-1 text-xs">
-              <span className="text-destructive font-medium print:text-red-700">■ Merah — Stok kritis (≤ 2 unit)</span>
-              <span className="text-yellow-600 dark:text-yellow-400 font-medium print:text-yellow-700">■ Kuning — Stok rendah (3–7 unit)</span>
-              <span className="text-foreground print:text-black">■ Normal — Stok aman (≥ 8 unit)</span>
-            </div>
-          </div>
-
-          <p className="text-xs italic print:text-gray-500">
-            <strong className="not-italic text-foreground print:text-black">Penting:</strong>{" "}
-            Rekomendasi ini bersifat pendukung keputusan dan tidak menggantikan pertimbangan bisnis manajemen toko.
-            Keputusan akhir mengenai pengadaan atau restok barang sepenuhnya berada pada wewenang pihak manajemen.
-            Hasil ini dibuat secara otomatis oleh sistem pada {formatDate(calc.calculation_date)}.
+          <p className="text-sm leading-6 text-muted-foreground print:text-gray-600 print:text-xs print:leading-5">
+            Data di atas merupakan <strong className="text-foreground print:text-black">rekomendasi</strong> yang dihasilkan
+            oleh Sistem Pendukung Keputusan (SPK) menggunakan metode <strong className="text-foreground print:text-black">TOPSIS</strong>.
+            Hasil ini bersifat analitis dan hanya sebagai bahan pertimbangan — bukan keputusan final.
+            Keputusan restock tetap sepenuhnya menjadi wewenang dan tanggung jawab pemilik toko.
           </p>
         </div>
-      </div>
 
-      {/* ── Print footer ─────────────────────────────────────────────────── */}
-      <div className="hidden print:flex mt-8 pt-4 border-t border-gray-300 text-xs text-gray-400 justify-between">
-        <span>Toko Banten Jaya Sport Fashion — Sistem Pendukung Keputusan Inventaris</span>
-        <span>Dokumen ini digenerate otomatis oleh sistem. Bukan dokumen resmi pengadaan.</span>
+        {/* Footer print */}
+        <div className="hidden print:flex mt-6 pt-4 border-t border-gray-300 text-xs text-gray-400 justify-between">
+          <span>Toko Banten Jaya Sport Fashion — Sistem Pendukung Keputusan Inventaris</span>
+          <span>Dokumen ini digenerate otomatis oleh sistem. Bukan dokumen resmi pengadaan.</span>
+        </div>
       </div>
-
-      {/* ── Steps panel (screen only) ─────────────────────────────────────── */}
-      {steps && <TopsisSteps steps={steps} />}
     </div>
   );
 }

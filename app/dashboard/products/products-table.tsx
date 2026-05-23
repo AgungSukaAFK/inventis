@@ -28,7 +28,7 @@ type Props = {
 };
 
 export function ProductsTable({ products, role }: Props) {
-  const canEditStock = role === "kepala_toko" || role === "kepala_gudang";
+  const canEditStock = role === "kepala_toko";
   const isKepalaToko = role === "kepala_toko";
 
   if (products.length === 0) {

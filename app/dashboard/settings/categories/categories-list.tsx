@@ -6,7 +6,7 @@ import { deleteCategory } from "./actions";
 import { cn } from "@/lib/utils";
 import type { Category } from "@/lib/supabase/types";
 
-export function CategoriesList({ categories }: { categories: Category[] }) {
+export function CategoriesList({ categories, readonly = false }: { categories: Category[]; readonly?: boolean }) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [pending, setPending] = useState<Record<string, boolean>>({});
 
@@ -37,20 +37,22 @@ export function CategoriesList({ categories }: { categories: Category[] }) {
         <li key={cat.id}>
           <div className="flex items-center justify-between px-4 py-3">
             <span className="text-sm font-medium">{cat.name}</span>
-            <button
-              type="button"
-              onClick={() => handleDelete(cat.id)}
-              disabled={pending[cat.id]}
-              className={cn(
-                "inline-flex h-7 w-7 items-center justify-center rounded-md border transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
-                pending[cat.id]
-                  ? "border-border text-muted-foreground opacity-50 cursor-not-allowed"
-                  : "border-destructive/30 text-destructive hover:bg-destructive/10 cursor-pointer",
-              )}
-              aria-label={`Hapus kategori ${cat.name}`}
-            >
-              <Trash2 className="h-3.5 w-3.5" />
-            </button>
+            {!readonly && (
+              <button
+                type="button"
+                onClick={() => handleDelete(cat.id)}
+                disabled={pending[cat.id]}
+                className={cn(
+                  "inline-flex h-7 w-7 items-center justify-center rounded-md border transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                  pending[cat.id]
+                    ? "border-border text-muted-foreground opacity-50 cursor-not-allowed"
+                    : "border-destructive/30 text-destructive hover:bg-destructive/10 cursor-pointer",
+                )}
+                aria-label={`Hapus kategori ${cat.name}`}
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            )}
           </div>
           {errors[cat.id] && (
             <p className="px-4 pb-2 text-xs text-destructive">{errors[cat.id]}</p>

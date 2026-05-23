@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { upsertMonthlySales } from "./actions";
 import { cn } from "@/lib/utils";
+import { Printer } from "lucide-react";
 
 const MONTHS = [
   "Januari", "Februari", "Maret", "April", "Mei", "Juni",
@@ -75,9 +76,30 @@ export function SalesForm({ month, products, salesMap }: Props) {
   const loading = isPending || isNavigating;
   const [focusedId, setFocusedId] = useState<string | null>(null);
 
+  const periodLabel = new Date(`${month}-01`).toLocaleDateString("id-ID", { month: "long", year: "numeric" });
+  const printDate   = new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+
+      {/* Print-only header */}
+      <div className="invisible h-0 overflow-hidden print:visible print:h-auto print:overflow-visible print:flex items-center justify-between mb-6 pb-5 border-b-2 border-gray-300">
+        <div className="flex items-center gap-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo-bj.png" alt="Logo" width={64} height={64} className="object-contain rounded-full" />
+          <div>
+            <p className="text-xs text-gray-500 uppercase tracking-widest">Laporan Penjualan Bulanan</p>
+            <p className="text-lg font-bold text-black leading-tight">Toko Banten Jaya Sport Fashion</p>
+            <p className="text-xs text-gray-500 mt-0.5">Periode: {periodLabel}</p>
+          </div>
+        </div>
+        <div className="text-right text-xs text-gray-500 space-y-0.5">
+          <p>Tanggal cetak:</p>
+          <p className="font-medium text-gray-700">{printDate}</p>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between print:hidden">
         <div>
           <h1 className="text-2xl font-semibold text-foreground">
             Input Penjualan Bulanan
@@ -116,22 +138,29 @@ export function SalesForm({ month, products, salesMap }: Props) {
         <input type="hidden" name="month" value={month} />
 
         <div className="overflow-hidden rounded-xl border border-border bg-card">
-          <div className="border-b border-border bg-muted/20 px-4 py-3 flex items-center justify-between">
+          <div className="border-b border-border bg-muted/20 px-4 py-3 flex items-center justify-between print:bg-gray-50 print:border-black/20">
             <div>
-              <h2 className="text-sm font-semibold text-foreground">
-                Data Penjualan —{" "}
-                {new Date(`${month}-01`).toLocaleDateString("id-ID", {
-                  month: "long",
-                  year: "numeric",
-                })}
+              <h2 className="text-sm font-semibold text-foreground print:text-black">
+                Data Penjualan — {periodLabel}
               </h2>
-              <p className="mt-0.5 text-xs text-muted-foreground">
+              <p className="mt-0.5 text-xs text-muted-foreground print:hidden">
                 Isi 0 untuk produk yang tidak terjual bulan ini.
               </p>
             </div>
-            <Button type="submit" disabled={loading} className="h-8">
-              {isPending ? "Menyimpan..." : "Simpan"}
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="h-8 print:hidden"
+                onClick={() => window.print()}
+              >
+                <Printer className="h-3.5 w-3.5 mr-1.5" />
+                Cetak
+              </Button>
+              <Button type="submit" disabled={loading} className="h-8 print:hidden">
+                {isPending ? "Menyimpan..." : "Simpan"}
+              </Button>
+            </div>
           </div>
 
           <table className="w-full text-sm">
@@ -190,9 +219,9 @@ export function SalesForm({ month, products, salesMap }: Props) {
                           aria-label={`Qty terjual ${p.name}`}
                           onFocus={() => setFocusedId(p.id)}
                           onBlur={() => setFocusedId(null)}
-                          className="h-8 w-20 rounded-lg border border-input bg-background px-2.5 text-center text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 disabled:opacity-50"
+                          className="h-8 w-20 rounded-lg border border-input bg-background px-2.5 text-center text-sm tabular-nums focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 disabled:opacity-50 print:border-0 print:bg-transparent print:ring-0 print:h-auto print:w-auto print:font-semibold print:text-black"
                         />
-                        <span className="text-xs text-muted-foreground w-6">unit</span>
+                        <span className="text-xs text-muted-foreground w-6 print:hidden">unit</span>
                       </div>
                     </td>
                   </tr>
@@ -208,6 +237,11 @@ export function SalesForm({ month, products, salesMap }: Props) {
           )}
         </div>
       </form>
+
+      <div className="hidden print:flex mt-8 pt-4 border-t border-gray-300 text-xs text-gray-400 justify-between">
+        <span>Toko Banten Jaya Sport Fashion — Data Penjualan {periodLabel}</span>
+        <span>Dicetak pada {printDate}</span>
+      </div>
     </div>
   );
 }
