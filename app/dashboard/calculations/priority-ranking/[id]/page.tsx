@@ -355,7 +355,7 @@ export default async function PriorityRankingDetailPage({
       </div>
 
       {/* ── Print footer ─────────────────────────────────────────────────── */}
-      <div className="hidden print:flex mt-8 pt-4 border-t border-gray-300 text-xs text-gray-400 justify-between">
+      <div className="invisible h-0 overflow-hidden print:visible print:h-auto print:overflow-visible print:flex mt-8 pt-4 border-t border-gray-300 text-xs text-gray-400 justify-between">
         <span>Toko Banten Jaya Sport Fashion — Sistem Pendukung Keputusan Inventaris</span>
         <span>Dokumen ini digenerate otomatis oleh sistem. Bukan dokumen resmi pengadaan.</span>
       </div>

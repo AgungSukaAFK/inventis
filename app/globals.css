@@ -205,6 +205,18 @@ html {
     overflow: visible !important;
   }
 
+  /* Override overflow-hidden on nested page components — globals only reaches 3 levels */
+  div, section, article, aside {
+    overflow: visible !important;
+    max-height: none !important;
+  }
+
+  /* Legacy browser support for break-inside-avoid */
+  .break-inside-avoid {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
   /* Page setup */
   @page {
     size: A4 portrait;
