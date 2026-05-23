@@ -127,7 +127,7 @@ export default async function LaporanPenjualanPage({
       </div>
 
       {/* Tabel */}
-      <div className="rounded-xl border border-border bg-card overflow-hidden print:border-black/20">
+      <div className="rounded-xl border border-border bg-card overflow-hidden print:overflow-visible print:border-black/20">
         <div className="px-4 py-3 border-b border-border bg-muted/20 print:bg-gray-50 print:border-black/20">
           <p className="text-sm font-semibold text-foreground print:text-black">
             Rincian Penjualan — {periodeLabel}
@@ -183,7 +183,7 @@ export default async function LaporanPenjualanPage({
       </div>
 
       {/* Footer print */}
-      <div className="hidden print:flex mt-8 pt-4 border-t border-gray-300 text-xs text-gray-400 justify-between">
+      <div className="invisible h-0 overflow-hidden print:visible print:h-auto print:overflow-visible print:flex mt-8 pt-4 border-t border-gray-300 text-xs text-gray-400 justify-between">
         <span>Toko Banten Jaya Sport Fashion — Laporan Penjualan {periodeLabel}</span>
         <span>Dicetak pada {printDate}</span>
       </div>
