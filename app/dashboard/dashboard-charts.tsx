@@ -12,7 +12,6 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import type { TooltipContentProps } from "recharts";
 
 export type MonthlySale = { month: string; qty: number; revenue: number };
 export type DistItem = { name: string; value: number; color: string };
@@ -30,7 +29,13 @@ function BarTooltip({
   label,
   showRevenue,
   barLabel,
-}: TooltipContentProps & { showRevenue: boolean; barLabel: string }) {
+}: {
+  active?: boolean;
+  payload?: ReadonlyArray<{ value: unknown }>;
+  label?: string | number;
+  showRevenue: boolean;
+  barLabel: string;
+}) {
   if (!active || !payload?.length) return null;
   const val = Number((payload[0] as { value: unknown }).value);
   return (
@@ -82,8 +87,14 @@ export function SalesTrendChart({
           tickFormatter={showRevenue ? (v: number) => fmtRupiah(v) : undefined}
         />
         <Tooltip
-          content={(props) => (
-            <BarTooltip {...props} showRevenue={showRevenue} barLabel={barLabel} />
+          content={({ active, payload, label }) => (
+            <BarTooltip
+              active={active}
+              payload={payload as ReadonlyArray<{ value: unknown }>}
+              label={label}
+              showRevenue={showRevenue}
+              barLabel={barLabel}
+            />
           )}
         />
         <Bar
