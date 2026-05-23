@@ -87,11 +87,11 @@ export function SalesTrendChart({
           tickFormatter={showRevenue ? (v: number) => fmtRupiah(v) : undefined}
         />
         <Tooltip
-          content={({ active, payload, label }) => (
+          content={(props: { active?: boolean; payload?: unknown; label?: string | number }) => (
             <BarTooltip
-              active={active}
-              payload={payload as ReadonlyArray<{ value: unknown }>}
-              label={label}
+              active={props.active}
+              payload={props.payload as ReadonlyArray<{ value: unknown }>}
+              label={props.label}
               showRevenue={showRevenue}
               barLabel={barLabel}
             />
