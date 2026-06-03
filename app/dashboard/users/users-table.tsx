@@ -63,7 +63,8 @@ export function UsersTable({ users }: { users: Profile[] }) {
 
   return (
     <div className="rounded-lg border border-border bg-card overflow-hidden">
-      <table className="w-full text-sm">
+      <div className="overflow-x-auto">
+      <table className="w-full text-sm min-w-140">
         <thead className="bg-muted/50 border-b border-border">
           <tr>
             <th className="text-left font-medium text-muted-foreground px-4 py-3">
@@ -159,6 +160,7 @@ export function UsersTable({ users }: { users: Profile[] }) {
           })}
         </tbody>
       </table>
+      </div>
       {users.length === 0 && (
         <div className="py-12 text-center text-sm text-muted-foreground">
           Belum ada pengguna terdaftar.

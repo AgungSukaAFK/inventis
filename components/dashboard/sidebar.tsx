@@ -12,6 +12,7 @@ import {
   Settings,
   ChevronDown,
   ShoppingCart,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUser } from "@/lib/hooks/use-user";
@@ -138,7 +139,17 @@ function isVisible(item: NavItem, role: UserRole | undefined) {
   return item.roles === "all" || item.roles.includes(role);
 }
 
-function NavGroupItem({ item, pathname, role }: { item: NavGroup; pathname: string; role: UserRole | undefined }) {
+function NavGroupItem({
+  item,
+  pathname,
+  role,
+  onClose,
+}: {
+  item: NavGroup;
+  pathname: string;
+  role: UserRole | undefined;
+  onClose?: () => void;
+}) {
   const visibleChildren = item.children.filter((c) =>
     !c.roles || c.roles === "all" || (role && c.roles.includes(role)),
   );
@@ -187,6 +198,7 @@ function NavGroupItem({ item, pathname, role }: { item: NavGroup; pathname: stri
                 <Link
                   key={child.href}
                   href={child.href}
+                  onClick={onClose}
                   className={cn(
                     "relative flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm transition-colors",
                     active
@@ -212,14 +224,14 @@ function NavGroupItem({ item, pathname, role }: { item: NavGroup; pathname: stri
   );
 }
 
-export function Sidebar() {
+function SidebarInner({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
   const { profile } = useUser();
 
   return (
-    <aside className="w-64 shrink-0 border-r border-border bg-card flex flex-col print:hidden">
+    <>
       {/* Logo */}
-      <div className="h-14 px-4 border-b border-border flex items-center">
+      <div className="h-14 px-4 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Image
             src="/logo-bj.png"
@@ -235,6 +247,14 @@ export function Sidebar() {
             </p>
           </div>
         </div>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
       <nav className="flex-1 px-3 py-3 space-y-0.5 overflow-y-auto">
@@ -242,7 +262,15 @@ export function Sidebar() {
           if (!isVisible(item, profile?.role)) return null;
 
           if (item.type === "group") {
-            return <NavGroupItem key={item.basePath} item={item} pathname={pathname} role={profile?.role} />;
+            return (
+              <NavGroupItem
+                key={item.basePath}
+                item={item}
+                pathname={pathname}
+                role={profile?.role}
+                onClose={onClose}
+              />
+            );
           }
 
           const Icon = item.icon;
@@ -255,6 +283,7 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onClose}
               className={cn(
                 "group flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                 isActive
@@ -277,6 +306,27 @@ export function Sidebar() {
           );
         })}
       </nav>
-    </aside>
+    </>
+  );
+}
+
+export function Sidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) {
+  return (
+    <>
+      {/* Desktop: always visible in flow */}
+      <aside className="hidden md:flex w-64 shrink-0 flex-col border-r border-border bg-card print:hidden">
+        <SidebarInner />
+      </aside>
+
+      {/* Mobile: fixed slide-in drawer */}
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-30 flex w-64 flex-col border-r border-border bg-card transition-transform duration-200 ease-in-out md:hidden print:hidden",
+          isOpen ? "translate-x-0" : "-translate-x-full",
+        )}
+      >
+        <SidebarInner onClose={onClose} />
+      </aside>
+    </>
   );
 }

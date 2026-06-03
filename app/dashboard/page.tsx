@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { Package, TrendingUp } from "lucide-react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { cn, fmtNum } from "@/lib/utils";
 import {
   DashboardCards,
   type ProductDetail,
@@ -341,7 +341,8 @@ export default async function DashboardPage() {
             </div>
           ) : (
             <>
-              <table className="w-full text-sm">
+              <div className="overflow-x-auto">
+              <table className="w-full text-sm min-w-72">
                 <thead>
                   <tr className="border-b border-border bg-muted/30">
                     <th className="px-5 py-2.5 text-left text-xs font-medium text-muted-foreground">
@@ -386,6 +387,7 @@ export default async function DashboardPage() {
                   ))}
                 </tbody>
               </table>
+              </div>
               {criticalProducts.length > 5 && (
                 <div className="px-5 py-2.5 text-xs text-muted-foreground border-t border-border bg-muted/10">
                   +{criticalProducts.length - 5} produk lainnya dengan stok kritis
@@ -431,7 +433,8 @@ export default async function DashboardPage() {
               </p>
             </div>
           ) : (
-            <table className="w-full text-sm">
+            <div className="overflow-x-auto">
+            <table className="w-full text-sm min-w-72">
               <thead>
                 <tr className="border-b border-border bg-muted/30">
                   <th className="px-5 py-2.5 text-center text-xs font-medium text-muted-foreground w-12">
@@ -478,7 +481,7 @@ export default async function DashboardPage() {
                         </p>
                       </td>
                       <td className="px-4 py-3 text-right text-xs font-mono tabular-nums">
-                        {r.preference_score.toFixed(4)}
+                        {fmtNum(r.preference_score)}
                       </td>
                       <td className="px-5 py-3 text-center">
                         <span
@@ -495,6 +498,7 @@ export default async function DashboardPage() {
                 })}
               </tbody>
             </table>
+            </div>
           )}
         </div>
       </div>

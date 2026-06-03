@@ -4,7 +4,7 @@ import { ChevronLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getCalculationDetail } from "@/app/dashboard/calculations/priority-ranking/actions";
 import { PrintButton } from "./print-button";
-import { cn } from "@/lib/utils";
+import { cn, fmtNum } from "@/lib/utils";
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("id-ID", {
@@ -225,7 +225,7 @@ export default async function LaporanPRDetailPage({
 
                     <td className="px-3 py-3 text-right tabular-nums text-sm print:text-xs print:text-gray-700">
                       {r.avg_daily_sales != null ? (
-                        <span>{r.avg_daily_sales}<span className="text-xs text-muted-foreground ml-0.5 print:text-gray-500"> unit</span></span>
+                        <span>{fmtNum(r.avg_daily_sales)}<span className="text-xs text-muted-foreground ml-0.5 print:text-gray-500"> unit</span></span>
                       ) : "—"}
                     </td>
 
@@ -243,7 +243,7 @@ export default async function LaporanPRDetailPage({
 
                     <td className="px-3 py-3 text-right">
                       <span className={cn("text-sm font-semibold tabular-nums print:text-xs", isTop3 ? "text-primary print:text-blue-700" : "text-foreground print:text-black")}>
-                        {vi.toFixed(4)}
+                        {fmtNum(vi)}
                       </span>
                       <div className="mt-1 h-1.5 w-full rounded-full bg-muted overflow-hidden print:hidden">
                         <div
