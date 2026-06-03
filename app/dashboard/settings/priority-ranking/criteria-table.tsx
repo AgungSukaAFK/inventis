@@ -232,8 +232,8 @@ function CriteriaCard({ criteria }: { criteria: CriteriaWithSubs }) {
       </div>
 
       {/* Sub-criteria table */}
-      <div className="border-t border-border">
-          <table className="w-full text-sm">
+      <div className="border-t border-border overflow-x-auto">
+          <table className="w-full text-sm min-w-96">
             <thead>
               <tr className="bg-muted/30">
                 <th className="px-3 py-2 text-center text-xs font-medium text-muted-foreground w-14">Skor</th>

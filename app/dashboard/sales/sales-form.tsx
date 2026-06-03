@@ -163,7 +163,8 @@ export function SalesForm({ month, products, salesMap }: Props) {
             </div>
           </div>
 
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-120">
             <thead>
               <tr className="border-b border-border bg-muted/30">
                 <th className="w-12 px-4 py-3 text-left font-medium text-muted-foreground">No</th>
@@ -229,6 +230,7 @@ export function SalesForm({ month, products, salesMap }: Props) {
               })}
             </tbody>
           </table>
+          </div>
 
           {products.length === 0 && (
             <p className="py-10 text-center text-sm text-muted-foreground">
