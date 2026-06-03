@@ -59,7 +59,7 @@ export function ProfileForm({ profile }: { profile: Profile }) {
             )}
 
             {/* Read-only: email & role */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label>Email</Label>
                 <Input value={profile.email} disabled readOnly />
@@ -74,7 +74,7 @@ export function ProfileForm({ profile }: { profile: Profile }) {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="full_name">Nama Lengkap</Label>
                 <Input

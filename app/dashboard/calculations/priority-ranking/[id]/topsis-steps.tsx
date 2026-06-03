@@ -2,20 +2,20 @@
 
 import { useState } from "react";
 import { ChevronDown, ChevronRight, Calculator, BarChart2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, fmtNum } from "@/lib/utils";
 import type { TopsisStepsData, StepCriteria } from "../actions";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function fmt(n: number, decimals = 4) {
-  return n.toFixed(decimals);
+function fmt(n: number) {
+  return fmtNum(n);
 }
 
 function fmtRaw(value: number, unit: string) {
   if (unit === "Rp") return "Rp " + new Intl.NumberFormat("id-ID").format(Math.round(value));
-  if (unit === "%")  return value.toFixed(2) + "%";
-  if (unit === "unit") return Math.round(value).toString();
-  return value.toFixed(2);
+  if (unit === "%")  return fmtNum(value) + "%";
+  if (unit === "unit") return fmtNum(value);
+  return fmtNum(value);
 }
 
 function matchedSub(subs: StepCriteria["subs"], rawValue: number) {
@@ -222,8 +222,8 @@ function OverallView({ steps }: { steps: TopsisStepsData }) {
                 <Td className="sticky left-0 bg-background font-medium">
                   <span className="font-mono text-muted-foreground mr-1.5">{p.rank}.</span>{p.name}
                 </Td>
-                <Td className="text-center">{fmt(dPlus[i], 6)}</Td>
-                <Td className="text-center">{fmt(dMinus[i], 6)}</Td>
+                <Td className="text-center">{fmt(dPlus[i])}</Td>
+                <Td className="text-center">{fmt(dMinus[i])}</Td>
               </tr>
             ))}
           </tbody>
@@ -249,10 +249,10 @@ function OverallView({ steps }: { steps: TopsisStepsData }) {
                 <Td className="sticky left-0 bg-background font-medium">
                   <span className="font-mono text-muted-foreground mr-1.5">{p.rank}.</span>{p.name}
                 </Td>
-                <Td className="text-center">{fmt(dPlus[i], 6)}</Td>
-                <Td className="text-center">{fmt(dMinus[i], 6)}</Td>
-                <Td className="text-center">{fmt(dPlus[i] + dMinus[i], 6)}</Td>
-                <Td className="text-center font-semibold">{fmt(pref[i], 4)}</Td>
+                <Td className="text-center">{fmt(dPlus[i])}</Td>
+                <Td className="text-center">{fmt(dMinus[i])}</Td>
+                <Td className="text-center">{fmt(dPlus[i] + dMinus[i])}</Td>
+                <Td className="text-center font-semibold">{fmt(pref[i])}</Td>
                 <Td className="text-center font-bold text-primary">{p.rank}</Td>
               </tr>
             ))}
@@ -417,7 +417,7 @@ function PerProductView({ steps }: { steps: TopsisStepsData }) {
             ].map((item) => (
               <div key={item.label} className="rounded-lg border border-border bg-muted/20 px-4 py-3">
                 <p className="text-muted-foreground mb-1">{item.label}</p>
-                <p className={cn("text-2xl font-mono font-bold", item.color)}>{fmt(item.value, 6)}</p>
+                <p className={cn("text-2xl font-mono font-bold", item.color)}>{fmt(item.value)}</p>
               </div>
             ))}
           </div>
@@ -427,12 +427,12 @@ function PerProductView({ steps }: { steps: TopsisStepsData }) {
         <StepCard step="L6" title="Nilai Preferensi & Ranking" desc="Vi = D− / (D+ + D−)">
           <div className="p-4 space-y-3 text-xs">
             <div className="rounded-lg border border-border bg-muted/10 px-4 py-3 font-mono text-sm">
-              Vi = D− / (D+ + D−) = {fmt(dMinus[i], 6)} / ({fmt(dPlus[i], 6)} + {fmt(dMinus[i], 6)}) = {fmt(dPlus[i] + dMinus[i], 6)}
+              Vi = D− / (D+ + D−) = {fmt(dMinus[i])} / ({fmt(dPlus[i])} + {fmt(dMinus[i])}) = {fmt(dPlus[i] + dMinus[i])}
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-lg border border-border bg-muted/20 px-4 py-3">
                 <p className="text-muted-foreground mb-1">Nilai Preferensi (Vi)</p>
-                <p className="text-xl font-mono font-bold text-foreground">{fmt(pref[i], 6)}</p>
+                <p className="text-xl font-mono font-bold text-foreground">{fmt(pref[i])}</p>
               </div>
               <div className="rounded-lg border border-primary/30 bg-primary/5 px-4 py-3">
                 <p className="text-muted-foreground mb-1">Ranking</p>

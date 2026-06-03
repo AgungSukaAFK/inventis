@@ -45,7 +45,7 @@ export default async function PriorityRankingPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-foreground">Priority Ranking</h1>
           <p className="text-sm text-muted-foreground mt-1">
@@ -75,7 +75,8 @@ export default async function PriorityRankingPage() {
         </div>
       ) : (
         <div className="rounded-xl border border-border bg-card overflow-hidden">
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-120">
             <thead>
               <tr className="border-b border-border bg-muted/30">
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground">Judul</th>
@@ -117,6 +118,7 @@ export default async function PriorityRankingPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>

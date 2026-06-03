@@ -57,7 +57,8 @@ export default async function LaporanPRPage() {
         </div>
       ) : (
         <div className="rounded-xl border border-border bg-card overflow-hidden">
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-120">
             <thead>
               <tr className="border-b border-border bg-muted/30">
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground">Judul</th>
@@ -104,6 +105,7 @@ export default async function LaporanPRPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>

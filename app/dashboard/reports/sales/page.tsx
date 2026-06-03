@@ -96,7 +96,7 @@ export default async function LaporanPenjualanPage({
       </div>
 
       {/* Header */}
-      <div className="flex items-start justify-between gap-4 print:hidden">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between print:hidden">
         <div>
           <h1 className="text-2xl font-semibold text-foreground">Laporan Penjualan</h1>
           <p className="text-sm text-muted-foreground mt-1">
@@ -133,7 +133,8 @@ export default async function LaporanPenjualanPage({
             Rincian Penjualan — {periodeLabel}
           </p>
         </div>
-        <table className="w-full text-sm print:text-xs">
+        <div className="overflow-x-auto print:overflow-visible">
+        <table className="w-full text-sm min-w-120 print:text-xs">
           <thead>
             <tr className="border-b border-border bg-muted/30 print:bg-gray-100 print:border-black/20">
               <th className="px-4 py-3 text-center font-medium text-muted-foreground w-12 print:text-gray-600">No</th>
@@ -180,6 +181,7 @@ export default async function LaporanPenjualanPage({
             </tr>
           </tfoot>
         </table>
+        </div>
       </div>
 
       {/* Footer print */}
