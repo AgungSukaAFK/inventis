@@ -28,13 +28,22 @@ export default function Home() {
           </div>
 
           <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
-            <NavLink href="#tentang" className="hover:text-foreground transition-colors">
+            <NavLink
+              href="#tentang"
+              className="hover:text-foreground transition-colors"
+            >
               Tentang
             </NavLink>
-            <NavLink href="#fitur" className="hover:text-foreground transition-colors">
+            <NavLink
+              href="#fitur"
+              className="hover:text-foreground transition-colors"
+            >
               Fitur
             </NavLink>
-            <NavLink href="#manfaat" className="hover:text-foreground transition-colors">
+            <NavLink
+              href="#manfaat"
+              className="hover:text-foreground transition-colors"
+            >
               Manfaat
             </NavLink>
           </nav>
